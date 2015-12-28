@@ -8,6 +8,7 @@ Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar
 Pür Linux will be distributed via Tarball in a quarterly release schedule, starting sometime in 2016.
 Installation will be as simple as untarring and running setup.sh
 Updating is as simple as untarring and replacing, while booted into a rescue distribution such as RIP or Finnix.
+We do not have any plans at this time to support any other method of updating. Security patches will be released as needed, via the same format.
 
 All configurations are done via plaintext files, or shell scripts.
 
@@ -55,6 +56,16 @@ A: Pür Linux is built entirely from upstream! This means we won't be mirroring 
 This repository will have a shellscript uploaded along with the first release, to assist you in automating the process.
 As URLs change, it'll be checked for accuracy and updated with each version of Pür Linux.
 This is the same shell script we use for builds.
+
+
+Q: How do you version number?
+
+A: Pür Linux will be released using a $Month.$Year-$minor.version.number scheme
+For example, an October release would be 10.2016.
+Security updates will use the minor version number as well, and will use the original release month's major version number.
+Example: 10.2016-1 would be the first security update for 10.2016.
+Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
+This means each major version has a 3 month lifecycle until EOL. You will not recieve any help for running an EOL version.
 
 
 Q: I wanna send you a message. Wat Do.
