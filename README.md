@@ -49,9 +49,7 @@ Q: How are we sure no one tampered with anything?
 A: Well, as far as the distro itself, you have to trust me. Thing is, you do that with Ubuntu/CentOS/Slackware/Gentoo already anyway. As far as releases go, each tarball will be signed, and checksummed.
 
 
-Q: Can I build this from source? 
-
-Q: Where the heck is your source code?
+Q: Can I build this from source? / Where the heck is your source code?
 
 A: Pür Linux is built entirely from upstream! This means we won't be mirroring anything except tarballs, buildscripts, and if we absolutely have to, specific changes.
 This repository will have a shellscript uploaded along with the first release, to assist you in automating the process.
