@@ -17,3 +17,16 @@ Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bas
 
 Pür Linux will use an rc-style init system, similar to Slackware, rather than sysvinit or SystemD. We strongly encourage against infecting your system with the SystemD malware. /dev will likely be populated via eudev, Gentoo's udev fork.
 While we would like to include Clang/LLVM, due to the Linux kernel being reliant on GCC-specific tweaks right now, we will be including GCC in base, with Clang available via pkgsrc. Plans will be made to transition to Clang in base as soon as is feasible.
+
+## Installation notes
+Pür Linux works great on most systems.
+Please be aware of the following caveats:
+As much as I'd like to include support for ZFS, the goal of Pür Linux is to be untouched from upstream.
+As such, ZFS support will remain as something you can compile in yourself.
+We may look at making minor changes to this policy in the future, or possibly including the support as an LKM.
+If so, we will begin including the zpool and zfs management tools in Base.
+
+As we are using pkgsrc for installed packages, Pür Linux will be placing all installed packages inside the /usr/local directory, similar to FreeBSD. /bin, /sbin, /etc, /usr/bin, and /usr/sbin will only be used for Base utilities.
+As such, some scripts you download may require tweaking (We always suggest using the #!/usr/bin/env $shell shebang over hardcoded paths) to work on Pür Linux.
+
+Pür Linux will work GREAT on Linode! Since it's just a tarball, boot into Rescue Mode and untar to the disk you created in the Linode Manager. Feel free to use the Linode kernel, rather than the kernel on disk.
