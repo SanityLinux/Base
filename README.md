@@ -30,3 +30,19 @@ As we are using pkgsrc for installed packages, Pür Linux will be placing all in
 As such, some scripts you download may require tweaking (We always suggest using the #!/usr/bin/env $shell shebang over hardcoded paths) to work on Pür Linux.
 
 Pür Linux will work GREAT on Linode! Since it's just a tarball, boot into Rescue Mode and untar to the disk you created in the Linode Manager. Feel free to use the Linode kernel, rather than the kernel on disk.
+
+## FAQ
+
+Q: So does pkgsrc update the whole system?
+A: Nope! Pür Linux breaks the traditional Linux paradigm of EVERYTHING IS A PACKAGE. I'm a FreeBSD sysadmin, and I really enjoy the separation between the Base system and 3rd party packages. While Pür Linux won't be developed in a single source tree like FreeBSD (Not much to develop folks. The goal is building and distributing Upstream code, remember?) there's still going to be separation between the Base OS (Pür Linux) and Ports (using pkgsrc)
+
+Q: You're just trying to make Linux like $BSD
+A: Yup. That's the world I come from. I started out as a Linux admin originally, but all the lack of standardization between distros made me tear my hair out. Not to mention the problems with the everything is a package way of doing things.
+I like having an OS be stable and secure and regularly released, with other packages being taken care of separately.
+
+Q: How are we sure no one tampered with anything?
+A: Well, as far as the distro itself, you have to trust me. Thing is, you do that with Ubuntu/CentOS/Slackware/Gentoo already anyway. As far as releases go, each tarball will be signed, and checksummed.
+
+Q: I wanna send you a message. Wat Do.
+A: Email rainbow@ponix.space (This'll be changing to rainbow@hacker.horse soon enough.)
+My PGP key is 0x5F94763A
