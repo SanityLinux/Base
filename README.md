@@ -43,6 +43,13 @@ I like having an OS be stable and secure and regularly released, with other pack
 Q: How are we sure no one tampered with anything?
 A: Well, as far as the distro itself, you have to trust me. Thing is, you do that with Ubuntu/CentOS/Slackware/Gentoo already anyway. As far as releases go, each tarball will be signed, and checksummed.
 
+Q: Can I build this from source? 
+Q: Where the heck is your source code?
+A: Pür Linux is built entirely from upstream! This means we won't be mirroring anything except tarballs, buildscripts, and if we absolutely have to, specific changes.
+This repository will have a shellscript uploaded along with the first release, to assist you in automating the process.
+As URLs change, it'll be checked for accuracy and updated with each version of Pür Linux.
+This is the same shell script we use for builds.
+
 Q: I wanna send you a message. Wat Do.
 A: Email rainbow@ponix.space (This'll be changing to rainbow@hacker.horse soon enough.)
 My PGP key is 0x5F94763A
