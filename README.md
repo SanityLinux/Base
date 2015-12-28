@@ -1,5 +1,5 @@
 # Pür Linux
-Pür Linux is a Linux distribution consisting entirely of Upstream code. No wonky distro-specific changes, no unneeded packages in base, and best of all, no SystemD. 
+Pür Linux is a Linux distribution consisting entirely of the latest Upstream code. No wonky distro-specific changes, no unneeded packages in base, and best of all, no SystemD. You don't get bleedinger-edged than this.
 
 Pür Linux (Pronounced Pure Linux) consists of a base system comprised of upstream pure code (GNU utils you'd expect on a Linux system, the latest vanilla Linux kernel upon packaging), and the Linux port of pkgsrc from NetBSD for ports.
 
