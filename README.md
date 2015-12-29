@@ -1,5 +1,5 @@
 # Pür Linux
-Pür Linux is a Linux distribution consisting entirely of the latest Upstream code. No wonky distro-specific changes, no unneeded packages in base, and best of all, no SystemD. You don't get bleedinger-edged than this.
+Pür Linux is a Linux distribution consisting entirely of the latest Upstream code. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no SystemD. You don't get bleedinger-edged than this.
 
 Pür Linux (Pronounced Pure Linux) consists of a base system comprised of upstream pure code (GNU utils you'd expect on a Linux system, the latest vanilla Linux kernel upon packaging), and the Linux port of pkgsrc from NetBSD for ports.
 
@@ -19,7 +19,7 @@ Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bas
 
 ## Plans
 
-Pür Linux will use an rc-style init system, similar to Slackware, rather than sysvinit or SystemD. We strongly encourage against infecting your system with the SystemD malware. /dev will likely be populated via eudev, Gentoo's udev fork.
+Pür Linux will use an rc-style init system, similar to Slackware, rather than sysvinit or SystemD. /dev will likely be populated via eudev, Gentoo's udev fork.
 While we would like to include Clang/LLVM, due to the Linux kernel being reliant on GCC-specific tweaks right now, we will be including GCC in base, with Clang available via pkgsrc. Plans will be made to transition to Clang in base as soon as is feasible.
 
 ## Installation notes
