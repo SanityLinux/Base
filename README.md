@@ -63,10 +63,10 @@ This is the same shell script we use for builds.
 
 Q: How do you version number?
 
-A: Pür Linux will be released using a $Month.$Year-$minor.version.number scheme
-For example, an October release would be 10.2016.
+A: Pür Linux will be released using a $Year.$Month-$minor.version.number scheme
+For example, an October release would be 2016.10.
 Security updates will use the minor version number as well, and will use the original release month's major version number.
-Example: 10.2016-1 would be the first security update for 10.2016.
+Example: 2016.10-1 would be the first security update for 2016.10.
 Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
 This means each major version has a 3 month lifecycle until EOL. You will not recieve any help for running an EOL version.
 
@@ -75,3 +75,4 @@ Q: I wanna send you a message. Wat Do.
 
 A: Email rainbow@ponix.space (This'll be changing to rainbow@hacker.horse soon enough.)
 My PGP key is 0x5F94763A
+You can also just hit me up on Twitter. I'm Hacker_Horse there.
