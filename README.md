@@ -1,6 +1,7 @@
 # Pür Linux
 Pür Linux is a Linux distribution consisting entirely of the latest Upstream code. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no SystemD. You don't get bleedinger-edged than this.
 
+## About Pür
 Pür Linux (Pronounced Pure Linux) consists of a base system comprised of upstream pure code (GNU utils you'd expect on a Linux system, the latest vanilla Linux kernel upon packaging), and the Linux port of pkgsrc from NetBSD for ports.
 
 Pür Linux is not a fork, nor respin of any pre-existing Linux Distribution.
@@ -16,6 +17,16 @@ We do not have any plans at this time to support any other method of updating. S
 All configurations are done via plaintext files, or shell scripts.
 
 Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bash will be available via pkgsrc.
+
+##Benefits of using Pür
+* No weird distro-specific changes to the file-system heirarchy: we use a standardized filesystem layout, similar to FreeBSD and traiditonal UNIX.
+* No binary logs or incomprehensible configuration formats: We're not using systemd. Everything is logged to plaintext. Configuration files are the same, unless otherwise specified by upstream, which brings us to:
+* 100% Upstream code: everything is build from upstream code. Everything works as the programmers intended, and all documentation is correct (or as correct as the programmer wrote) for the version installed.
+* Latest code: Pür's goal is to provide the latest stable code releases from the programmers and teams involved. You won't find a 3 year out of date version of something here. Every release is completely comprised of the newest stable releases, unless otherwise specified in the Changelog/Errata Notification
+* No new tools to learn: If you know UNIX, you know Pür Linux. Releases are installed and updated as tarballs you simply extract and overwrite with. Wanna copy your configuration to a whole new system? Tar up /etc and /usr/local, and extract onto a new disk or partition along with the latest Pür Linux release tarball. Done!
+* "Cloud" Support: We support the Linode** platform right out of the box. Boot into Rescue Mode, untar Pür to the disk you created in the Linode Manager, and boot with the latest Linode kernel!
+** DISCLAIMER: Pür Linux is not endorsed by Linode, LLC. The project is not officially affiliated with Linode, LLC.
+Pür Linux is, however, maintained by an existing Linode employee, on their own time.
 
 ## Plans
 
