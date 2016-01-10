@@ -21,7 +21,6 @@ Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bas
 ## The Pür Linux Team
 * Rainbow - Project Lead
 * Brent Saner - He does stuff. Sometimes things.
-* fewt - Advisory Stuff
 
 ##Benefits of using Pür
 * No weird distro-specific changes to the file-system heirarchy: we use a standardized filesystem layout, similar to FreeBSD and traiditonal UNIX.
