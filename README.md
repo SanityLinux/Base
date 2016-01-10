@@ -97,3 +97,8 @@ Q: I wanna send you a message. Wat Do.
 A: Email rainbow@ponix.space (This'll be changing to rainbow@hacker.horse soon enough.)
 My PGP key is 0x5F94763A
 You can also just hit me up on Twitter. I'm Hacker_Horse there.
+
+Q: IRC?
+
+A: #purlinux on irc.freenode.net 
+Come say hi!
