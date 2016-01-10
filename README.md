@@ -18,6 +18,11 @@ All configurations are done via plaintext files, or shell scripts.
 
 Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bash will be available via pkgsrc.
 
+## The Pür Linux Team
+* Rainbow - Project Lead
+* Brent Saner - He does stuff. Sometimes things.
+* fewt - Advisory Stuff
+
 ##Benefits of using Pür
 * No weird distro-specific changes to the file-system heirarchy: we use a standardized filesystem layout, similar to FreeBSD and traiditonal UNIX.
 * No binary logs or incomprehensible configuration formats: We're not using systemd. Everything is logged to plaintext. Configuration files are the same, unless otherwise specified by upstream, which brings us to:
