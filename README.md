@@ -23,7 +23,7 @@ Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bas
 * Brent Saner - He does stuff. Sometimes things.
 
 ##Benefits of using Pür
-* No weird distro-specific changes to the file-system heirarchy: we use a standardized filesystem layout, similar to FreeBSD and traiditonal UNIX.
+* No weird distro-specific changes to the file-system heirarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
 * No binary logs or incomprehensible configuration formats: We're not using systemd. Everything is logged to plaintext. Configuration files are the same, unless otherwise specified by upstream, which brings us to:
 * 100% Upstream code: everything is build from upstream code. Everything works as the programmers intended, and all documentation is correct (or as correct as the programmer wrote) for the version installed.
 * Latest code: Pür's goal is to provide the latest stable code releases from the programmers and teams involved. You won't find a 3 year out of date version of something here. Every release is completely comprised of the newest stable releases, unless otherwise specified in the Changelog/Errata Notification
