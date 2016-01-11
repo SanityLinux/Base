@@ -7,7 +7,7 @@ Pür Linux (Pronounced Pure Linux) consists of a base system comprised of upstre
 Pür Linux is not a fork, nor respin of any pre-existing Linux Distribution.
 The only relation to any other distro is that right now, we use a Debian box for building the environment that gets tar'd.
 
-Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar to FreeBSD, wherein the base operating system is updated and maintained separately from user-installed packages. This means you can update them independantly, and package updates won't bork your OS.
+Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar to FreeBSD, wherein the base operating system is updated and maintained separately from user-installed packages. This means you can update them independently, and package updates won't bork your OS.
 
 Pür Linux will be distributed via Tarball in a quarterly release schedule, starting sometime in 2016.
 Installation will be as simple as untarring and running setup.sh
@@ -23,7 +23,7 @@ Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bas
 * Brent Saner - He does stuff. Sometimes things.
 
 ##Benefits of using Pür
-* No weird distro-specific changes to the file-system heirarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
+* No weird distro-specific changes to the file-system hierarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
 * No binary logs or incomprehensible configuration formats: We're not using systemd. Everything is logged to plaintext. Configuration files are the same, unless otherwise specified by upstream, which brings us to:
 * 100% Upstream code: everything is build from upstream code. Everything works as the programmers intended, and all documentation is correct (or as correct as the programmer wrote) for the version installed.
 * Latest code: Pür's goal is to provide the latest stable code releases from the programmers and teams involved. You won't find a 3 year out of date version of something here. Every release is completely comprised of the newest stable releases, unless otherwise specified in the Changelog/Errata Notification
