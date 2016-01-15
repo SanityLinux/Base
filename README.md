@@ -12,7 +12,9 @@ Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar
 Pür Linux will be distributed via Tarball in a quarterly release schedule, starting sometime in 2016.
 Installation will be as simple as untarring and running setup.sh
 Updating is as simple as untarring and replacing, while booted into a rescue distribution such as RIP or Finnix.
-We do not have any plans at this time to support any other method of updating. Security patches will be released as needed, via the same format.
+Security patches will be released as needed, via the same format.
+There are tentative plans for a tool, similar to freebsd-update, that will allow in-place upgrades and security updates.
+Please be aware this tool is not yet on our roadmap.
 
 All configurations are done via plaintext files, or shell scripts.
 
