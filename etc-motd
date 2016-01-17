@@ -1,0 +1,23 @@
+                    _   _
+        __________ (_) (_)       .____    .__                     
+        \______   \__ _________  |    |   |__| ____  __ _____  ___
+         |     ___/  |  \_  __ \ |    |   |  |/    \|  |  \  \/  /
+         |    |   |  |  /|  | \/ |    |___|  |   |  \  |  />    < 
+         |____|   |____/ |__|    |_______ \__|___|  /____//__/\_ \
+                                         \/       \/            \/  
+
+##########################################################################
+#                   Default System Message Of The Day                    #
+##########################################################################
+#        Welcome to Pür Linux, Oldschool Linux for Oldschool hackers     #
+#        A Distro based on the concept that the old ways were best.      #
+#    Pür Linux abides by the UNIX philosophy of Keep It Simple Stupid.   #
+##########################################################################
+#    To get started, run /usr/bin/setup.sh to configure your system.     #
+# To install PürPorts (NetBSD's Pkgsrc), the default Package Management  #
+#     System for Pür Linux, just run /usr/bin/ports! Pkgsrc will be      #
+# bootstrapped in /usr/ports with packages installing in the /usr/local  #
+#                                 prefix.                                #
+##########################################################################
+#                           Edit me in /etc/motd                         #
+##########################################################################
