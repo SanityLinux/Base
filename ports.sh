@@ -12,7 +12,8 @@ cd /usr
 cvs -danoncvs@anoncvs.netbsd.org:/cvsroot checkout pkgsrc
 mv /usr/pkgsrc ./usr/ports
 /usr/ports/bootstrap/bootstrap --prefix /usr/local
-echo "Ports Bootstrapped. Now Moving Bootstrapper to /usr/bin/ports.bootstrapped"
-mv /usr/bin/ports /usr/bin/ports.bootstrapped
+echo "Ports Bootstrapped. Now Moving Bootstrapper to /usr/bin/bootstrapped"
+mv /usr/bin/ports /usr/bin/bootstrapped
+chmod -x /usr/bin/bootstrapped
 echo "Go ahead! Try it out! Example: cd /usr/ports/shells/fish && bmake install clean"
 echo "More information on Pkgsrc is available at http://www.pkgsrc.org/ "
