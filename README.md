@@ -18,7 +18,7 @@ Please be aware this tool is not yet on our roadmap.
 
 All configurations are done via plaintext files, or shell scripts.
 
-Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bash will be available via pkgsrc.
+Shells included are bash, csh, ksh, and fish.
 
 ## The Pür Linux Team
 * Rainbow - Project Lead
@@ -31,6 +31,7 @@ Shells included are zsh, csh, ksh, and fish. Zsh is bash-compatible, however bas
 * Latest code: Pür's goal is to provide the latest stable code releases from the programmers and teams involved. You won't find a 3 year out of date version of something here. Every release is completely comprised of the newest stable releases, unless otherwise specified in the Changelog/Errata Notification
 * No new tools to learn: If you know UNIX, you know Pür Linux. Releases are installed and updated as tarballs you simply extract and overwrite with. Wanna copy your configuration to a whole new system? Tar up /etc and /usr/local, and extract onto a new disk or partition along with the latest Pür Linux release tarball. Done!
 * "Cloud" Support: We support the Linode** platform right out of the box. Boot into Rescue Mode, untar Pür to the disk you created in the Linode Manager, and boot with the latest Linode kernel!
+* Releases are synced with the latest stable snapshot of the NetBSD pkgsrc tree, and via pkgin and pkgsrc's automated building framework, binary packages are also available, in addition to the standard From Source methodology provided by pkgsrc
 
 ** DISCLAIMER: Pür Linux is not endorsed by Linode, LLC. The project is not officially affiliated with Linode, LLC.
 Pür Linux is, however, maintained by an existing Linode employee, on their own time.
