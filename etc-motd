@@ -9,7 +9,7 @@
 ##########################################################################
 #                   Default System Message Of The Day                    #
 ##########################################################################
-#        Welcome to Pür Linux, Oldschool Linux for Oldschool hackers     #
+#        Welcome to Pür Linux, Oldschool Linux for Oldschool Hackers     #
 #        A Distro based on the concept that the old ways were best.      #
 #    Pür Linux abides by the UNIX philosophy of Keep It Simple Stupid.   #
 ##########################################################################
@@ -18,6 +18,8 @@
 #     System for Pür Linux, just run /usr/bin/ports! Pkgsrc will be      #
 # bootstrapped in /usr/ports with packages installing in the /usr/local  #
 #                                 prefix.                                #
+#     For Binary packages, run /usr/bin/pkgin. If you haven't run        #
+#      /usr/bin/ports yet, it will automatically call that first.        #
 ##########################################################################
-#                           Edit me in /etc/motd                         #
+#                         Edit me in /etc/motd                           #
 ##########################################################################
