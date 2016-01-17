@@ -32,6 +32,7 @@ Shells included are bash, csh, ksh, and fish.
 * No new tools to learn: If you know UNIX, you know Pür Linux. Releases are installed and updated as tarballs you simply extract and overwrite with. Wanna copy your configuration to a whole new system? Tar up /etc and /usr/local, and extract onto a new disk or partition along with the latest Pür Linux release tarball. Done!
 * "Cloud" Support: We support the Linode** platform right out of the box. Boot into Rescue Mode, untar Pür to the disk you created in the Linode Manager, and boot with the latest Linode kernel!
 * Releases are synced with the latest stable snapshot of the NetBSD pkgsrc tree, and via pkgin and pkgsrc's automated building framework, binary packages are also available, in addition to the standard From Source methodology provided by pkgsrc
+* ZFS is a supported Filesystem, and will be included as a Loadable Kernel Module compiled against the current upstream stable Linux kernel.
 
 ** DISCLAIMER: Pür Linux is not endorsed by Linode, LLC. The project is not officially affiliated with Linode, LLC.
 Pür Linux is, however, maintained by an existing Linode employee, on their own time.
@@ -48,12 +49,8 @@ While we would like to include Clang/LLVM, due to the Linux kernel being reliant
 
 ## Installation notes
 Pür Linux works great on most systems.
+
 Please be aware of the following caveats:
-̶A̶s̶ ̶m̶u̶c̶h̶ ̶a̶s̶ ̶I̶'̶d̶ ̶l̶i̶k̶e̶ ̶t̶o̶ ̶i̶n̶c̶l̶u̶d̶e̶ ̶s̶u̶p̶p̶o̶r̶t̶ ̶f̶o̶r̶ ̶Z̶F̶S̶,̶ ̶t̶h̶e̶ ̶g̶o̶a̶l̶ ̶o̶f̶ ̶P̶ü̶r̶ ̶L̶i̶n̶u̶x̶ ̶i̶s̶ ̶t̶o̶ ̶b̶e̶ ̶u̶n̶t̶o̶u̶c̶h̶e̶d̶ ̶f̶r̶o̶m̶ ̶u̶p̶s̶t̶r̶e̶a̶m̶.̶
-̶A̶s̶ ̶s̶u̶c̶h̶,̶ ̶Z̶F̶S̶ ̶s̶u̶p̶p̶o̶r̶t̶ ̶w̶i̶l̶l̶ ̶r̶e̶m̶a̶i̶n̶ ̶a̶s̶ ̶s̶o̶m̶e̶t̶h̶i̶n̶g̶ ̶y̶o̶u̶ ̶c̶a̶n̶ ̶c̶o̶m̶p̶i̶l̶e̶ ̶i̶n̶ ̶y̶o̶u̶r̶s̶e̶l̶f̶.̶
-̶W̶e̶ ̶m̶a̶y̶ ̶l̶o̶o̶k̶ ̶a̶t̶ ̶m̶a̶k̶i̶n̶g̶ ̶m̶i̶n̶o̶r̶ ̶c̶h̶a̶n̶g̶e̶s̶ ̶t̶o̶ ̶t̶h̶i̶s̶ ̶p̶o̶l̶i̶c̶y̶ ̶i̶n̶ ̶t̶h̶e̶ ̶f̶u̶t̶u̶r̶e̶,̶ ̶o̶r̶ ̶p̶o̶s̶s̶i̶b̶l̶y̶ ̶i̶n̶c̶l̶u̶d̶i̶n̶g̶ ̶t̶h̶e̶ ̶s̶u̶p̶p̶o̶r̶t̶ ̶a̶s̶ ̶a̶n̶ ̶L̶K̶M̶.̶
-̶I̶f̶ ̶s̶o̶,̶ ̶w̶e̶ ̶w̶i̶l̶l̶ ̶b̶e̶g̶i̶n̶ ̶i̶n̶c̶l̶u̶d̶i̶n̶g̶ ̶t̶h̶e̶ ̶z̶p̶o̶o̶l̶ ̶a̶n̶d̶ ̶z̶f̶s̶ ̶m̶a̶n̶a̶g̶e̶m̶e̶n̶t̶ ̶t̶o̶o̶l̶s̶ ̶i̶n̶ ̶B̶a̶s̶e̶.̶
-ZFS will be provided in the Base OS as an LKM, with every release.
 
 As we are using pkgsrc for installed packages, Pür Linux will be placing all installed packages inside the /usr/local directory, similar to FreeBSD. /bin, /sbin, /etc, /usr/bin, and /usr/sbin will only be used for Base utilities.
 As such, some scripts you download may require tweaking (We always suggest using the #!/usr/bin/env $shell shebang over hardcoded paths) to work on Pür Linux.
