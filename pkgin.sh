@@ -12,4 +12,6 @@ cd /usr/ports/pkgtools/libnbcompat && make install clean
 cd /usr/ports/net/libfetch && make install clean
 cd /usr/ports/archivers/libarchive && make install clean
 cd /usr/ports/pkgtools/pkgin && make install clean
+touch /usr/local/etc/pkgin/repositories.conf
+# Add pkgin repo info once the buildhost is up and producing packages.
 rm /usr/bin/pkgin
