@@ -1,6 +1,7 @@
 #!/bin/sh
-# This script resides in /usr/bin as /usr/bin/ports and bootstraps pkgsrc on Pür Linux.
-# It is meant to be run at first boot and auto-removes itself, similar to the pkg bootstrapper in FreeBSD.
+# This script resides in /usr/bin as /usr/bin/portfetch and bootstraps pkgsrc on Pür Linux.
+# It is meant to be run at first boot, however it may be called at any time to pull the current
+# updated branch of pkgsrc if you've deleted it. You may also use portupdate to update your existing tree.
 # Please be aware this script does some non-standard things, by renaming pkgsrc to ports in the
 # directory tree and overall using a more FreeBSD-based layout.
 # bmake is installed in /usr/local/bin
