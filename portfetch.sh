@@ -13,8 +13,7 @@ cd /usr
 cvs -q -z2 -d anoncvs@anoncvs.NetBSD.org:/cvsroot checkout -r pkgsrc-2015Q4 -P pkgsrc
 mv /usr/pkgsrc /usr/ports
 /usr/ports/bootstrap/bootstrap --prefix /usr/local
-echo "Ports Bootstrapped. Now Moving Bootstrapper to /usr/bin/bootstrapped"
-mv /usr/bin/ports /usr/bin/bootstrapped
-chmod -x /usr/bin/bootstrapped
+echo "Ports Bootstrapped."
+rm /usr/etc/portfetch.new
 echo "Go ahead! Try it out! Example: cd /usr/ports/shells/fish && bmake install clean"
 echo "More information on Pkgsrc is available at http://www.pkgsrc.org/ "
