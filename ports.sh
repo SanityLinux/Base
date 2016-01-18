@@ -9,7 +9,7 @@
 
 echo "Bootstrapping PürPorts (NetBSD Pkgsrc)"
 cd /usr
-cvs -danoncvs@anoncvs.netbsd.org:/cvsroot checkout pkgsrc
+cvs -q -z2 -d anoncvs@anoncvs.NetBSD.org:/cvsroot checkout -r pkgsrc-2015Q4 -P pkgsrc
 mv /usr/pkgsrc /usr/ports
 /usr/ports/bootstrap/bootstrap --prefix /usr/local
 echo "Ports Bootstrapped. Now Moving Bootstrapper to /usr/bin/bootstrapped"
