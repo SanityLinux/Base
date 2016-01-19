@@ -1,4 +1,7 @@
 #!/bin/bash
+set -e ## bail out if we hit ANY non-zero status. you did a great job writing this- i didn't get any when testing on an almost-vanilla Arch (other than wget not being installed).
+## for moar debugging, you can add set -x below this line and in your shell, before you run the script, run "export PS4='Line ${LINENO}: '"- that'll pring the line number of the current command (and with set -x, the actual command)
+## for the script being run.-bts,Tue Jan 19 07:29:38 EST 2016
 purlogo() {
 cat <<"EOT"
             _   _
@@ -41,6 +44,7 @@ purlogo
 # gawk
 # GNU 'bison' 2.7 or later
 # patch
+# wget ## or switch the scripts to use curl instead; it's more commonly part of the base packageset than wget. -bts,Tue Jan 19 07:28:02 EST 2016
 
 # If Debian, please rm /bin/sh and ln -s /bin/bash /bin/sh
 
