@@ -70,11 +70,11 @@ fi
 env -i HOME=$HOME TERM=$TERM PS1='\u:\w\$ '
 set +h
 umask 022
-mkdir $HOME/purroot
+rm -rf $HOME/purroot ; mkdir -p $HOME/purroot
 PUR=$HOME/purroot
 export PUR
-mkdir $PUR/tools
-mkdir $PUR/sources
+rm -rf $PUR/tools ; mkdir -p $PUR/tools
+rm -rf $PUR/sources ; mkdir -p $PUR/sources
 PSRC=$PUR/sources
 LC_ALL=POSIX
 PUR_TGT=$(uname -m)-pur-linux-gnu
@@ -82,13 +82,13 @@ sudo rm -rf /tools
 sudo ln -s $PUR/tools /tools
 PTLS=$PUR/tools
 export PTLS
-mkdir $PTLS/include
+rm -rf $PTLS/include ; mkdir -p $PTLS/include
 PATH=$PTLS/bin:/usr/local/bin:/bin:/usr/bin
 export LC_ALL PUR_TGT PATH PBLD
 GLIBCVERS=2.22
 HOSTGLIBCVERS=2.11
 export GLIBCVERS HOSTGLIBCVERS
-mkdir $HOME/specs
+rm -rf $HOME/specs ; mkdir -p $HOME/specs
 sudo ln -s $HOME/specs /specs
 # Uncomment the next line and modify as needed for multicore systems.
 # export MAKEFLAGS='-j 2'
@@ -270,6 +270,8 @@ make install
 
 # binutils pass 2
 mkdir -v $PSRC/binutils-build
+cd $PSRC/binutils-2.25
+make distclean
 cd $PSRC/binutils-build
 CC=$PUR_TGT-gcc                \
 AR=$PUR_TGT-ar                 \
