@@ -1,6 +1,6 @@
 #!/bin/bash
-set -e ## bail out if we hit ANY non-zero status. you did a great job writing this- i didn't get any when testing on an almost-vanilla Arch (other than wget not being installed).
-## for moar debugging, you can add set -x below this line and in your shell, before you run the script, run "export PS4='Line ${LINENO}: '"- that'll pring the line number of the current command (and with set -x, the actual command)
+set -e
+## for moar debugging, you can add set -x below this line and in your shell, before you run the script, run "export PS4='Line ${LINENO}: '"- that'll print the line number of the current command (and with set -x, the actual command)
 ## for the script being run.-bts,Tue Jan 19 07:29:38 EST 2016
 purlogo() {
 cat <<"EOT"
@@ -44,7 +44,7 @@ purlogo
 # gawk
 # GNU 'bison' 2.7 or later
 # patch
-# wget ## or switch the scripts to use curl instead; it's more commonly part of the base packageset than wget. -bts,Tue Jan 19 07:28:02 EST 2016
+# wget or curl
 
 # If Debian, please rm /bin/sh and ln -s /bin/bash /bin/sh
 
@@ -64,6 +64,12 @@ if whoami | grep -q "root"; then
 	echo " Don't run me as root. Create a new user!!      "
 	echo "/!\ /!\ /!\ WARNING WARNING WARNING /!\ /!\ /!\ /!\ "
 	exit 1
+fi
+
+if ! type curl > /dev/null 2>&1; then
+	fetch_cmd="$(which wget)"
+else
+	fetch_cmd="$(which curl) -LO"
 fi
 
 # Setting up ENV
@@ -94,45 +100,45 @@ sudo ln -s $HOME/specs /specs
 # export MAKEFLAGS='-j 2'
 
 #Eventually, I'll move hardcoded file locations to use variables instead
-#Variables will be set below here, so it'll wget ftp://blahblah.blah/$bash.tar.gz
+#Variables will be set below here, so it'll fetch ftp://blahblah.blah/$bash.tar.gz
 #instead of hunting and replacing each line. 
 
 #Wgetting everything. Move untarring up here at some point too.
 cd $PSRC
-wget http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.gz
-wget http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz
-wget ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
-wget http://mirrors.concertpass.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz
-wget https://gmplib.org/download/gmp/gmp-6.1.0.tar.bz2
-wget https://www.busybox.net/downloads/busybox-1.24.1.tar.bz2
-wget https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.gz
-wget http://ftp.gnu.org/gnu/coreutils/coreutils-8.24.tar.xz
-wget ftp://ftp.cwru.edu/pub/bash/bash-4.3.tar.gz
-wget http://ftp.gnu.org/gnu/glibc/glibc-2.22.tar.gz
-wget http://downloads.sourceforge.net/tcl/tcl8.6.4-src.tar.gz
-wget http://prdownloads.sourceforge.net/expect/expect5.45.tar.gz
-wget http://ftp.gnu.org/gnu/dejagnu/dejagnu-1.5.3.tar.gz
-wget http://sourceforge.net/projects/check/files/check/0.10.0/check-0.10.0.tar.gz
-wget http://ftp.gnu.org/gnu//ncurses/ncurses-6.0.tar.gz
-wget http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
-wget http://ftp.gnu.org/gnu/diffutils/diffutils-3.3.tar.xz
-wget ftp://ftp.astron.com/pub/file/file-5.25.tar.gz
-wget http://ftp.gnu.org/gnu/findutils/findutils-4.6.0.tar.gz
-wget http://ftp.gnu.org/gnu/gawk/gawk-4.1.3.tar.gz
-wget http://ftp.gnu.org/gnu/gettext/gettext-latest.tar.gz
-wget http://ftp.gnu.org/gnu/grep/grep-2.22.tar.xz
-wget http://ftp.gnu.org/gnu/gzip/gzip-1.6.tar.xz
-wget http://ftp.gnu.org/gnu/m4/m4-latest.tar.gz
-wget http://ftp.gnu.org/gnu/make/make-4.1.tar.gz
-wget http://www.cpan.org/src/5.0/perl-5.22.1.tar.gz
-wget http://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.gz
-wget http://ftp.gnu.org/gnu/sed/sed-4.2.2.tar.gz
-wget http://ftp.gnu.org/gnu/tar/tar-latest.tar.gz
-wget http://ftp.gnu.org/gnu/texinfo/texinfo-6.0.tar.gz
-wget https://www.kernel.org/pub/linux/utils/util-linux/v2.27/util-linux-2.27.1.tar.gz
-wget http://tukaani.org/xz/xz-5.2.2.tar.gz
-# wget http://fishshell.com/files/2.2.0/fish-2.2.0.tar.gz
-# wget ftp://ftp.astron.com/pub/tcsh/tcsh-6.19.00.tar.gz
+${fetch_cmd} http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz
+${fetch_cmd} ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
+${fetch_cmd} http://mirrors.concertpass.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz
+${fetch_cmd} https://gmplib.org/download/gmp/gmp-6.1.0.tar.bz2
+${fetch_cmd} https://www.busybox.net/downloads/busybox-1.24.1.tar.bz2
+${fetch_cmd} https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/coreutils/coreutils-8.24.tar.xz
+${fetch_cmd} ftp://ftp.cwru.edu/pub/bash/bash-4.3.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/glibc/glibc-2.22.tar.gz
+${fetch_cmd} http://downloads.sourceforge.net/tcl/tcl8.6.4-src.tar.gz
+${fetch_cmd} http://prdownloads.sourceforge.net/expect/expect5.45.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/dejagnu/dejagnu-1.5.3.tar.gz
+${fetch_cmd} http://sourceforge.net/projects/check/files/check/0.10.0/check-0.10.0.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu//ncurses/ncurses-6.0.tar.gz
+${fetch_cmd} http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/diffutils/diffutils-3.3.tar.xz
+${fetch_cmd} ftp://ftp.astron.com/pub/file/file-5.25.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/findutils/findutils-4.6.0.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/gawk/gawk-4.1.3.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/gettext/gettext-latest.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/grep/grep-2.22.tar.xz
+${fetch_cmd} http://ftp.gnu.org/gnu/gzip/gzip-1.6.tar.xz
+${fetch_cmd} http://ftp.gnu.org/gnu/m4/m4-latest.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/make/make-4.1.tar.gz
+${fetch_cmd} http://www.cpan.org/src/5.0/perl-5.22.1.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/sed/sed-4.2.2.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/tar/tar-latest.tar.gz
+${fetch_cmd} http://ftp.gnu.org/gnu/texinfo/texinfo-6.0.tar.gz
+${fetch_cmd} https://www.kernel.org/pub/linux/utils/util-linux/v2.27/util-linux-2.27.1.tar.gz
+${fetch_cmd} http://tukaani.org/xz/xz-5.2.2.tar.gz
+# ${fetch_cmd} http://fishshell.com/files/2.2.0/fish-2.2.0.tar.gz
+# ${fetch_cmd} ftp://ftp.astron.com/pub/tcsh/tcsh-6.19.00.tar.gz
 # Can't seem to grab ksh93 tarball right now.
 
 ############################################
@@ -613,7 +619,7 @@ if [ -h $PUR/dev/shm ]; then
 fi
 # Entering chroot 
 cd $PUR
-wget https://raw.githubusercontent.com/RainbowHackz/Pur-Linux/master/chrootboot.sh
+${fetch_cmd} https://raw.githubusercontent.com/RainbowHackz/Pur-Linux/master/chrootboot.sh
 chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
 chroot ./ /chrootboot.sh
