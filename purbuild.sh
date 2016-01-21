@@ -131,6 +131,9 @@ wget http://ftp.gnu.org/gnu/tar/tar-latest.tar.gz
 wget http://ftp.gnu.org/gnu/texinfo/texinfo-6.0.tar.gz
 wget https://www.kernel.org/pub/linux/utils/util-linux/v2.27/util-linux-2.27.1.tar.gz
 wget http://tukaani.org/xz/xz-5.2.2.tar.gz
+# wget http://fishshell.com/files/2.2.0/fish-2.2.0.tar.gz
+# wget ftp://ftp.astron.com/pub/tcsh/tcsh-6.19.00.tar.gz
+# Can't seem to grab ksh93 tarball right now.
 
 ############################################
 # BUILDING BOOTSTRAP ENVIRONMENT IN /TOOLS #
