@@ -20,6 +20,9 @@ All configurations are done via plaintext files, or shell scripts.
 
 Shells included are bash, csh, ksh, and fish.
 
+We are also the very FIRST Linux Distribution with plans to ship NTPsec rather than classic NTP or OpenNTP by default!
+https://www.ntpsec.org/
+
 ## The Pür Linux Team
 * Rainbow - Project Lead
 * Brent Saner - He does stuff. Sometimes things.
@@ -41,9 +44,6 @@ Pür Linux is, however, maintained by an existing Linode employee, on their own 
 
 Pür Linux will use an rc-style init system, similar to Slackware, rather than sysvinit or SystemD. /dev will likely be populated via eudev, Gentoo's udev fork.
 While we would like to include Clang/LLVM, due to the Linux kernel being reliant on GCC-specific tweaks right now, we will be including GCC in base, with Clang available via pkgsrc. Plans will be made to transition to Clang in base as soon as is feasible.
-
-Pür Linux is also the first distro with plans to ship NTPsec rather than classic NTP or OpenNTP by default!
-https://www.ntpsec.org/
 
 ### Project Roadmap (Please note this is not a guarantee, only a loose plan. This will be updated as things happen)
 * Spring 2016 - Initial Stable release
