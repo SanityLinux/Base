@@ -282,7 +282,7 @@ make install
 # mkdir -v $PSRC/binutils-build ## extraneous mkdir
 cd $PSRC/binutils-2.25
 make distclean ## Maybe I didn't read over binutils README well enough, but any reason we're adding this?
-# cd $PSRC/binutils-build
+cd $PSRC/binutils-build
 CC=$PUR_TGT-gcc                \
 AR=$PUR_TGT-ar                 \
 RANLIB=$PUR_TGT-ranlib         \
