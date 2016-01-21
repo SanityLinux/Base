@@ -301,6 +301,7 @@ make -C ld LIB_PATH=/usr/lib:/lib
 cp -v ld/ld-new /tools/bin
 
 # GCC round 2
+cd ${PUR}/tools/lib
 cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
   `dirname $($PUR_TGT-gcc -print-libgcc-file-name)`/include-fixed/limits.h
 for file in \
