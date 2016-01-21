@@ -140,6 +140,10 @@ wget http://tukaani.org/xz/xz-5.2.2.tar.gz
 ############################################
 
 #binutils first build
+mkdir -v /tools/lib
+case $(uname -m) in
+  x86_64) ln -sv /tools/lib /tools/lib64 ;;
+esac
 cd $PSRC
 tar xvfz binutils-2.25.tar.gz
 cd binutils-2.25
@@ -151,9 +155,6 @@ cd binutils-2.25
     --disable-werror
 
 make
-case $(uname -m) in
-  x86_64) mkdir -v /tools/lib && ln -sv lib /tools/lib64 ;;
-esac
 make install
 
 # building GCC first run.
