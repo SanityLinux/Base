@@ -279,7 +279,7 @@ make
 make install
 
 # binutils pass 2
-# mkdir -v $PSRC/binutils-build ## extraneous mkdir
+mkdir -v $PSRC/binutils-build ## extraneous mkdir || NYET! ./purbuild.sh: line 285: cd: /home/bts/purroot/sources/binutils-build: No such file or directory
 cd $PSRC/binutils-2.25
 make distclean ## Maybe I didn't read over binutils README well enough, but any reason we're adding this?
 cd $PSRC/binutils-build
