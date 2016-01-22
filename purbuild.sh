@@ -52,6 +52,7 @@ purlogo
 # apt-get install gcc g++ make libgmp-dev libmpfr-dev libmpc-dev gawk bison patch sudo texinfo file flex xz-utils
 
 # Arch Linux: Install base-devel
+# pacman -Syu && pacman -Sy base-devel
 
 #Important: Key Verification of packages is being implemented in an automated method,
 # where this script will fail and print to your screen if a key fails. It requires GPG to be installed
