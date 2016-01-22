@@ -129,8 +129,9 @@ export GLIBCVERS HOSTGLIBCVERS
 rm -rf ${HOME}/specs
 mkdir -p ${HOME}/specs
 sudo ln -s ${HOME}/specs /specs
-# Uncomment the next line and modify as needed for multicore systems.
-export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
+# Uncomment the next line for multicore systems. Commented out for debugging purposes.
+# We can not guarantee things will build correctly with parallel compilation.
+# export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
 
 #Eventually, I'll move hardcoded file locations to use variables instead
 #Variables will be set below here, so it'll fetch ftp://blahblah.blah/$bash.tar.gz
