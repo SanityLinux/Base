@@ -13,6 +13,7 @@
 # This file is located in /usr/sbin/portsnag
 #
 # Copyright 2016 Pür Linux Project
+# Portsnag originally written by Rainbow
 # All rights reserved
 #
 # Redistribution and use in source and binary forms, with or without
