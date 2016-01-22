@@ -232,6 +232,7 @@ do
 done
 mkdir -v ../gcc-build
 cd ../gcc-build
+rm -rf config.cache
 ${PWD}/../gcc-5.3.0/configure                                                \
     --target=$PUR_TGT                              \
     --prefix=/tools                                \
@@ -330,15 +331,15 @@ make install >> ${PLOGS}/libstdc++_make.1 2>&1
 
 # binutils pass 2
 echo "Binutils - second pass."
-mkdir -v ${PSRC}/binutils-build
+mkdir -pv ${PSRC}/binutils-build
 cd ${PSRC}/binutils-2.25
 echo "[Binutils] Cleaning from first pass..."
 make distclean > ${PLOGS}/binutils_pre-clean.2 2>&1
-cd $PSRC/binutils-build
+cd ${PSRC}/binutils-build
 echo "[Binutils] Configuring..."
-CC=$PUR_TGT-gcc                \
-AR=$PUR_TGT-ar                 \
-RANLIB=$PUR_TGT-ranlib         \
+CC=${PUR_TGT}-gcc                \
+AR=${PUR_TGT}-ar                 \
+RANLIB=${PUR_TGT}-ranlib         \
 ../binutils-2.25/configure     \
     --prefix=/tools            \
     --disable-nls              \
@@ -374,6 +375,9 @@ do
 #define STANDARD_STARTFILE_PREFIX_2 ""' >> $file
   touch ${file}.orig
 done
+cd ${PSRC}/gcc-build
+make distclean > ${PLOGS}/gcc_pre-clean.2 2>&1
+cd ${PSRC}/gcc-5.3.0
 echo "[GCC] MPFR"
 tar xfz ../mpfr-3.1.3.tar.gz
 mv -v mpfr-3.1.3 mpfr
@@ -385,7 +389,7 @@ mv -v mpc-1.0.3 mpc
 echo "[GCC] GMP"
 tar xfj ../gmp-6.1.0.tar.bz2
 mv -v gmp-6.1.0 gmp
-mkdir -v ../gcc-build
+mkdir -pv ../gcc-build
 cd ../gcc-build
 echo "[GCC] Configuring..."
 CC=$PUR_TGT-gcc                                    \
