@@ -232,7 +232,6 @@ do
 done
 mkdir -v ../gcc-build
 cd ../gcc-build
-rm -rf config.cache
 ${PWD}/../gcc-5.3.0/configure                                                \
     --target=$PUR_TGT                              \
     --prefix=/tools                                \
@@ -391,6 +390,7 @@ tar xfj ../gmp-6.1.0.tar.bz2
 mv -v gmp-6.1.0 gmp
 mkdir -pv ../gcc-build
 cd ../gcc-build
+find ./ -name 'config.cache' -exec rm -rf '{}' \;
 echo "[GCC] Configuring..."
 CC=$PUR_TGT-gcc                                    \
 CXX=$PUR_TGT-g++                                   \
@@ -432,7 +432,7 @@ echo "Running further tests..."
 # TCL
 cd ${PSRC}
 tar xfz tcl8.6.4-src.tar.gz
-cd tcl8.6.4-src
+cd tcl8.6.4
 cd unix
 echo "[TCL] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/tcl_configure.1 2>&1
