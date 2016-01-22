@@ -24,8 +24,8 @@ We are also the very FIRST Linux Distribution with plans to ship NTPsec rather t
 https://www.ntpsec.org/
 
 ## The Pür Linux Team
-* Rainbow - Project Lead
-* Brent Saner - He does stuff. Sometimes things.
+* Rainbow - Project Director
+* Brent Saner - Git Wizard, Architecture Engineer, Developer
 
 ##Benefits of using Pür
 * No weird distro-specific changes to the file-system hierarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
