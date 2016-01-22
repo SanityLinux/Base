@@ -128,6 +128,7 @@ mkdir -p ${HOME}/specs
 sudo ln -s ${HOME}/specs /specs
 # Uncomment the next line and modify as needed for multicore systems.
 export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
+ulimit -n 512 ## Needed for building GNU Make on Debian
 
 #Eventually, I'll move hardcoded file locations to use variables instead
 #Variables will be set below here, so it'll fetch ftp://blahblah.blah/$bash.tar.gz
