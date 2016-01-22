@@ -68,10 +68,10 @@ if [[ ${1} == "bootstrap" ]];
 	mv /usr/pkgsrc /usr/ports
 	/usr/ports/bootstrap/bootstrap --prefix /usr/local
 	rm /usr/local/etc/mk.conf
-	ln -s /usr/etc/pkgsrcmk.conf /usr/local/etc/mk.conf
-#	cd /usr/local/etc
-#	wget https://github.com/RainbowHackz/Pur-Linux/blob/master/src/usr/local/etc/mk.conf
-#	chmod 644 /usr/local/etc/mk.conf
+#	ln -s /usr/etc/pkgsrcmk.conf /usr/local/etc/mk.conf
+	cd /usr/local/etc
+	wget https://github.com/RainbowHackz/Pur-Linux/blob/master/src/usr/local/etc/mk.conf
+	chmod 644 /usr/local/etc/mk.conf
 	echo "Ports Bootstrapped."
 	echo "Go ahead! Try it out! Example: cd /usr/ports/shells/fish && bmake install clean"
 	echo "More information on Pkgsrc is available at http://www.pkgsrc.org/ "
