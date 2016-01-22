@@ -75,22 +75,26 @@ if whoami | grep -q "root"; then
         exit 1
 fi
 
+echo
 
 # Are we using curl or wget?
 if ! type curl > /dev/null 2>&1; then
-        fetch_cmd="$(which wget)"
+        fetch_cmd="$(which wget) -cq --tries=5 --waitretry 3 -a /tmp/fetch.log"
 else
-        fetch_cmd="$(which curl) -LO"
+        fetch_cmd="$(which curl) -LOsSf --retry 5 --retry-delay 3 -C -"
 fi
 
 
 # Setting up ENV
-env -i HOME=${HOME} TERM=${TERM} PS1='\u:\w\$ '
+echo "Setting up the environment and cleaning results from previous runs if necessary..."
+env -i HOME=${HOME} TERM=${TERM} PS1='\u:\w\$ ' > /dev/null 2>&1
 set +h
 umask 022
 
+echo
+
 # Scrub/create paths
-rm -rf ${HOME}/purroot
+#rm -rf ${HOME}/purroot
 mkdir -p ${HOME}/purroot
 PUR=${HOME}/purroot
 export PUR
@@ -100,8 +104,9 @@ mkdir -p ${PLOGS}
 
 rm -rf ${PUR}/tools
 mkdir -p ${PUR}/tools
-rm -rf ${PUR}/sources
 mkdir -p ${PUR}/sources
+#rm -rf ${PUR}/sources
+find ${PUR}/sources/. -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
 PSRC=${PUR}/sources
 LC_ALL=POSIX
 PUR_TGT="$(uname -m)-pur-linux-gnu"
@@ -122,14 +127,16 @@ rm -rf ${HOME}/specs
 mkdir -p ${HOME}/specs
 sudo ln -s ${HOME}/specs /specs
 # Uncomment the next line and modify as needed for multicore systems.
-# export MAKEFLAGS='-j 2'
+export MAKEFLAGS='-j 5'
 
 #Eventually, I'll move hardcoded file locations to use variables instead
 #Variables will be set below here, so it'll fetch ftp://blahblah.blah/$bash.tar.gz
 #instead of hunting and replacing each line. 
 
 #Wgetting everything. Move untarring up here at some point too.
-cd $PSRC
+cd ${PSRC}
+echo "Fetching source tarballs (if necessary). This may take a while..."
+echo "If you have curl installed, errors will display on STDERR. Otherwise if using wget, errors will be logged to /tmp/fetch.log"
 ${fetch_cmd} http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.gz
 ${fetch_cmd} http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz
 ${fetch_cmd} ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
@@ -165,6 +172,7 @@ ${fetch_cmd} http://tukaani.org/xz/xz-5.2.2.tar.gz
 ${fetch_cmd} http://fishshell.com/files/2.2.0/fish-2.2.0.tar.gz
 ${fetch_cmd} ftp://ftp.astron.com/pub/tcsh/tcsh-6.19.00.tar.gz
 
+echo
 
 ############################################
 # BUILDING BOOTSTRAP ENVIRONMENT IN /TOOLS #
@@ -331,9 +339,13 @@ make install >> ${PLOGS}/libstdc++_make.1 2>&1
 # binutils pass 2
 echo "Binutils - second pass."
 mkdir -pv ${PSRC}/binutils-build
-cd ${PSRC}/binutils-2.25
 echo "[Binutils] Cleaning from first pass..."
-make distclean > ${PLOGS}/binutils_pre-clean.2 2>&1
+#cd ${PSRC}/binutils-2.25
+#make distclean > ${PLOGS}/binutils_pre-clean.2 2>&1 ## fuck this shit. keeps throwing an error. let's just start from scratch.
+rm -rf ${PSRC}/binutils-2.25
+cd ${PSRC}
+tar xfz binutils-2.25.tar.gz
+cd binutils-2.25
 cd ${PSRC}/binutils-build
 echo "[Binutils] Configuring..."
 CC=${PUR_TGT}-gcc                \
