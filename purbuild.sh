@@ -558,7 +558,7 @@ make check >> ${PLOGS}/file_make.1 2>&1
 make install >> ${PLOGS}/file_make.1 2>&1
 
 # Findutils
-cd $i{PSRC}
+cd ${PSRC}
 tar xfz findutils-4.6.0.tar.gz
 cd findutils-4.6.0
 echo "[Findutils] Configuring..."
