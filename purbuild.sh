@@ -127,7 +127,7 @@ rm -rf ${HOME}/specs
 mkdir -p ${HOME}/specs
 sudo ln -s ${HOME}/specs /specs
 # Uncomment the next line and modify as needed for multicore systems.
-export MAKEFLAGS='-j 5'
+export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
 
 #Eventually, I'll move hardcoded file locations to use variables instead
 #Variables will be set below here, so it'll fetch ftp://blahblah.blah/$bash.tar.gz
@@ -180,9 +180,9 @@ echo
 
 #binutils first build
 echo "Binutils - first pass."
-mkdir -v /tools/lib
+mkdir /tools/lib
 case $(uname -m) in
-  x86_64) ln -sv /tools/lib /tools/lib64 ;;
+  x86_64) ln -s /tools/lib /tools/lib64 ;;
 esac
 cd ${PSRC}
 tar xfz binutils-2.25.tar.gz
@@ -211,24 +211,24 @@ cd ${PSRC}
 tar xfz gcc-5.3.0.tar.gz
 cd gcc-5.3.0
 tar xfz ../mpfr-3.1.3.tar.gz
-mv -v mpfr-3.1.3 mpfr
+mv mpfr-3.1.3 mpfr
 
 # MPC
 echo "[GCC] MPC"
 tar xfz ../mpc-1.0.3.tar.gz
-mv -v mpc-1.0.3 mpc
+mv mpc-1.0.3 mpc
 
 #GMP
 echo "[GCC] GMP"
 tar xfj ../gmp-6.1.0.tar.bz2
-mv -v gmp-6.1.0 gmp
+mv gmp-6.1.0 gmp
 
 #GCC TIME BABY OH YEAH
 echo "[GCC] Configuring..."
 for file in \
  $(find gcc/config -name linux64.h -o -name linux.h -o -name sysv4.h)
 do
-  cp -uv ${file}{,.orig}
+  cp -u ${file}{,.orig}
   sed -re 's@/lib(64)?(32)?/ld@/tools&@g' \
       -e 's@/usr@/tools@g' ${file}.orig > ${file}
   echo '
@@ -238,7 +238,7 @@ do
 #define STANDARD_STARTFILE_PREFIX_2 ""' >> ${file}
   touch ${file}.orig
 done
-mkdir -v ../gcc-build
+mkdir ../gcc-build
 cd ../gcc-build
 ${PWD}/../gcc-5.3.0/configure                                                \
     --target=$PUR_TGT                              \
@@ -273,7 +273,7 @@ tar xfz linux-4.4.tar.gz
 cd linux-4.4
 make mrproper > ${PLOGS}/kernel-headers_make.1 2>&1
 make INSTALL_HDR_PATH=dest headers_install >> ${PLOGS}/kernel-headers_make.1 2>&1
-cp -rv dest/include/* /tools/include
+cp -r dest/include/* /tools/include
 
 # Building glibc - first pass
 echo "GlibC - first pass."
@@ -307,10 +307,10 @@ if readelf -l a.out | grep ': /tools' \
 | grep -q ld-linux-x86-64.so.2;
 then
 	echo "Test passed."
-	rm -v dummy.c a.out
+	rm dummy.c a.out
 else
 	echo "Test Failed. Now Exiting, post glibc build."
-	rm -v dummy.c a.out
+	rm dummy.c a.out
 	exit 1
 fi
 
@@ -338,7 +338,7 @@ make install >> ${PLOGS}/libstdc++_make.1 2>&1
 
 # binutils pass 2
 echo "Binutils - second pass."
-mkdir -pv ${PSRC}/binutils-build
+mkdir -p ${PSRC}/binutils-build
 echo "[Binutils] Cleaning from first pass..."
 #cd ${PSRC}/binutils-2.25
 #make distclean > ${PLOGS}/binutils_pre-clean.2 2>&1 ## fuck this shit. keeps throwing an error. let's just start from scratch.
@@ -364,7 +364,7 @@ make install >> ${PLOGS}/binutils_make.2 2>&1
 #fiddly bits
 make -C ld clean > ${PLOGS}/binutils_post-tweaks.2 2>&1
 make -C ld LIB_PATH=/usr/lib:/lib >> ${PLOGS}/binutils_post-tweaks.2 2>&1
-cp -v ld/ld-new /tools/bin
+cp ld/ld-new /tools/bin
 
 # GCC round 2
 echo "GCC - second pass."
@@ -376,7 +376,7 @@ cat gcc/${PUR_TGT}/5.3.0/plugin/include/limitx.h\
 for file in \
  $(find gcc/${PUR_TGT}/5.3.0/plugin/include/config -name linux64.h -o -name linux.h -o -name sysv4.h)
 do
-  cp -uv ${file}{,.orig}
+  cp -u ${file}{,.orig}
   sed -re 's@/lib(64)?(32)?/ld@/tools&@g' \
       -e 's@/usr@/tools@g' ${file}.orig > ${file}
   echo '
@@ -391,16 +391,16 @@ make distclean > ${PLOGS}/gcc_pre-clean.2 2>&1
 cd ${PSRC}/gcc-5.3.0
 echo "[GCC] MPFR"
 tar xfz ../mpfr-3.1.3.tar.gz
-mv -v mpfr-3.1.3 mpfr
+mv mpfr-3.1.3 mpfr
 # MPC
 echo "[GCC] MPC"
 tar xfz ../mpc-1.0.3.tar.gz
-mv -v mpc-1.0.3 mpc
+mv mpc-1.0.3 mpc
 #GMP
 echo "[GCC] GMP"
 tar xfj ../gmp-6.1.0.tar.bz2
-mv -v gmp-6.1.0 gmp
-mkdir -pv ../gcc-build
+mv gmp-6.1.0 gmp
+mkdir -p ../gcc-build
 cd ../gcc-build
 find ./ -name 'config.cache' -exec rm -rf '{}' \;
 echo "[GCC] Configuring..."
@@ -421,7 +421,7 @@ RANLIB=$PUR_TGT-ranlib                             \
 echo "[GCC] Building..."
 make > ${PLOGS}/gcc_make.2 2>&1
 make install >> ${PLOGS}/gcc_make.2 2>&1
-ln -sv gcc /tools/bin/cc
+ln -s gcc /tools/bin/cc
 
 #testing again
 echo -n "Runnning tests before continuing... "
@@ -431,10 +431,10 @@ if readelf -l a.out | grep ': /tools' \
 | grep -q ld-linux;
 then
 	echo "Test passed."
-	rm -v dummy.c a.out
+	rm dummy.c a.out
 else
 	echo "Test Failed. Now Exiting, post GCC Round 2 build"
-        rm -v dummy.c a.out
+        rm dummy.c a.out
         exit 1
 fi
 
@@ -452,15 +452,15 @@ echo "[TCL] Building..."
 make > ${PLOGS}/tcl_make.1 2>&1
 TZ=UTC make test >> ${PLOGS}/tcl_test.1 2>&1
 make install >> ${PLOGS}/tcl_test.1 2>&1
-chmod -v u+w /tools/lib/libtcl8.6.so
+chmod u+w /tools/lib/libtcl8.6.so
 make install-private-headers >> ${PLOGS}/tcl_test.1 2>&1
-ln -sv tclsh8.6 /tools/bin/tclsh
+ln -s tclsh8.6 /tools/bin/tclsh
 
 #Expect
 cd ${PSRC}
 tar xfz expect5.45.tar.gz
 cd expect5.45
-cp -v configure{,.orig}
+cp configure{,.orig}
 echo "[Expect] Configuring..."
 sed -e 's:/usr/local/bin:/bin:' configure.orig > configure
 ./configure --prefix=/tools       \
@@ -523,7 +523,7 @@ echo "[Bash] Building..."
 make > ${PLOGS}/bash_make.1 2>&1
 # make tests >> ${PLOGS}/bash_make.1 2>&1
 make install >> ${PLOGS}/bash_make.1 2>&1
-ln -sv bash /tools/bin/sh
+ln -s bash /tools/bin/sh
 
 #Bzip2
 cd ${PSRC}
@@ -607,7 +607,7 @@ make -C intl pluralx.c >> ${PLOGS}/gettext_make.1 2>&1
 make -C src msgfmt >> ${PLOGS}/gettext_make.1 2>&1
 make -C src msgmerge >> ${PLOGS}/gettext_make.1 2>&1
 make -C src xgettext >> ${PLOGS}/gettext_make.1 2>&1
-cp -v src/{msgfmt,msgmerge,xgettext} /tools/bin
+cp src/{msgfmt,msgmerge,xgettext} /tools/bin
 
 # GNU Grep
 cd ${PSRC}
@@ -678,9 +678,9 @@ sh Configure -des -Dprefix=/tools -Dlibs=-lm > ${PLOGS}/perl_configure.1 2>&1
 
 echo "[Perl] Building..."
 make > ${PLOGS}/perl_make.1 2>&1
-cp -v perl cpan/podlators/pod2man /tools/bin
-mkdir -pv /tools/lib/perl5/5.22.0
-cp -Rv lib/* /tools/lib/perl5/5.22.0
+cp perl cpan/podlators/pod2man /tools/bin
+mkdir -p /tools/lib/perl5/5.22.0
+cp -R lib/* /tools/lib/perl5/5.22.0
 
 #GNU Sed
 cd ${PSRC}
@@ -760,19 +760,19 @@ sudo chown -R root:root ${PUR}/tools
 ############################################
 
 #Device Nodes
-sudo mkdir -pv ${PUR}/{dev,proc,sys,run}
+sudo mkdir -p ${PUR}/{dev,proc,sys,run}
 sudo mknod -m 600 ${PUR}/dev/console c 5 1
 sudo mknod -m 666 ${PUR}/dev/null c 1 3
 # Temporary workaround? Either going with eudev or the old static way, not sure yet! Wheee putting off decisions!
 # I vote for eudev, personally. It'll give us way better hardware detection/hotplugging/etc. support. -bts. Thu Jan 21 09:14:51 EST 2016
-sudo mount -v --bind /dev ${PUR}/dev
+sudo mount --bind /dev ${PUR}/dev
 sudo mount -vt devpts devpts ${PUR}/dev/pts -o gid=5,mode=620
 sudo mount -vt proc proc ${PUR}/proc
 sudo mount -vt sysfs sysfs ${PUR}/sys
 sudo mount -vt tmpfs tmpfs ${PUR}/run
 if [ -h ${PUR}/dev/shm ];
 then
-	sudo mkdir -pv ${PUR}/$(readlink ${PUR}/dev/shm)
+	sudo mkdir -p ${PUR}/$(readlink ${PUR}/dev/shm)
 fi
 # Entering chroot 
 cd ${PUR}
