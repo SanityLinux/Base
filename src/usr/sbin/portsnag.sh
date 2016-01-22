@@ -77,7 +77,12 @@ if [[ ${1} == "bootstrap" ]];
 	echo "More information on Pkgsrc is available at http://www.pkgsrc.org/ "
 elif [[ ${1} == "fetch" ]];
 	then
-	# Add in check for y/n
+	echo "Warning! This will REMOVE your current pkgsrc tree and fetch a BRAND NEW ONE. Cool? (y/n)"
+	read -n 1 ch
+	if [ "$ch" == "n" ] ; then
+		echo "Exiting..."
+		exit 1
+	fi
 	rm -rf /usr/ports
 	echo "Deleting and fetching latest PürPorts (NetBSD Pkgsrc)"
 	cd /usr
