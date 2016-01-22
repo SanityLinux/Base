@@ -51,6 +51,8 @@ purlogo
 #Uncomment the following Line for Debian 8
 # apt-get install gcc g++ make libgmp-dev libmpfr-dev libmpc-dev gawk bison patch sudo texinfo file flex xz-utils
 
+# Arch Linux: enable Multilib in /etc/pacman.conf and install multilib-devel
+
 #Important: Key Verification of packages is being implemented in an automated method,
 # where this script will fail and print to your screen if a key fails. It requires GPG to be installed
 # and may not be implemented for every package yet.
