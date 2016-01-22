@@ -72,6 +72,7 @@ if [[ ${1} == "bootstrap" ]];
 	cd /usr/local/etc
 	wget https://github.com/RainbowHackz/Pur-Linux/blob/master/src/usr/local/etc/mk.conf
 	chmod 644 /usr/local/etc/mk.conf
+	/usr/sbin/repup
 	echo "Ports Bootstrapped."
 	echo "Go ahead! Try it out! Example: cd /usr/ports/shells/fish && bmake install clean"
 	echo "More information on Pkgsrc is available at http://www.pkgsrc.org/ "
@@ -88,10 +89,12 @@ elif [[ ${1} == "fetch" ]];
 	cd /usr
 	cvs -q -z2 -d anoncvs@anoncvs.NetBSD.org:/cvsroot checkout -r $PKGSRCBRANCH -P pkgsrc
 	mv /usr/pkgsrc /usr/ports
+	/usr/sbin/repup
 elif [[ ${1} == "update" ]];
 	then
 	echo "Updating Ports..."
 	cd /usr/ports && env CVS_RSH=ssh cvs up -dP
+	/usr/sbin/repup
 elif [[ ${1} == "" ]];
 	then
 	usage
