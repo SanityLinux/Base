@@ -26,7 +26,7 @@ https://www.ntpsec.org/
 ## The Pür Linux Team
 * Rainbow - Project Director, BASE team lead, Packages Maintainer
 * Brent Saner - Git Wizard, Architecture Engineer, BASE Developer
-* James Stewart Documentation team lead
+* James Stewart - Documentation team lead
 
 ##Benefits of using Pür
 * No weird distro-specific changes to the file-system hierarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
