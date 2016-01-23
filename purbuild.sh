@@ -1,10 +1,15 @@
 #!/bin/bash
 set -e
-set -x
-## For moar debugging, you can add set -x below this line and in your shell, before you run the script, run
+## For moar debugging, before you run the script, run
 ## 	export PS4='Line ${LINENO}: '
-## That prints the line number of the current command (and with set -x, the actual command) for the script
+##  (or add "PS4='Line ${LINENO}: '" (without the double-quotes) to your ~/.bashrc)
+## That prints the line number of the current command
+## (and with set -x, the actual command) for the script
 ## being run.-bts,Tue Jan 19 07:29:38 EST 2016
+if [ "${PS4}" != '+' ];
+then
+	set -x
+fi
 purlogo() {
 cat <<"EOT"
             _   _
@@ -81,9 +86,9 @@ echo
 
 # Are we using curl or wget?
 if ! type curl > /dev/null 2>&1; then
-        fetch_cmd="$(which wget) -cq --tries=5 --waitretry 3 -a /tmp/fetch.log"
+        fetch_cmd="$(which wget) -c --progress=bar --tries=5 --waitretry 3 -a /tmp/fetch.log"
 else
-        fetch_cmd="$(which curl) -LOsSf --retry 5 --retry-delay 3 -C -"
+        fetch_cmd="$(which curl) --progress-bar -LSOf --retry 5 --retry-delay 3 -C -"
 fi
 
 
@@ -128,55 +133,71 @@ export GLIBCVERS HOSTGLIBCVERS
 rm -rf ${HOME}/specs
 mkdir -p ${HOME}/specs
 sudo ln -s ${HOME}/specs /specs
-# Uncomment the next line and modify as needed for multicore systems.
-#export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
+if [ "${user}" == 'bts' ];
+then
+	export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
+fi
 ulimit -n 512 ## Needed for building GNU Make on Debian
+
+
 
 #Eventually, I'll move hardcoded file locations to use variables instead
 #Variables will be set below here, so it'll fetch ftp://blahblah.blah/$bash.tar.gz
 #instead of hunting and replacing each line. 
 
-#Wgetting everything. Move untarring up here at some point too.
+#Fetching everything. Move untarring up here at some point too.
 cd ${PSRC}
-echo "Fetching source tarballs (if necessary). This may take a while..."
-echo "If you have curl installed, errors will display on STDERR. Otherwise if using wget, errors will be logged to /tmp/fetch.log"
-${fetch_cmd} http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
-${fetch_cmd} ftp://mirrors-usa.go-parts.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz # upstream hates curl
-${fetch_cmd} ftp://ftp.gmplib.org/pub/gmp-6.1.0/gmp-6.1.0.tar.bz2
-${fetch_cmd} ftp://mirrors.rit.edu/gentoo/distfiles/busybox-1.24.1.tar.bz2 # upstream http hates curl
-${fetch_cmd} ftp://ftp.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/coreutils/coreutils-8.24.tar.xz
-${fetch_cmd} ftp://ftp.cwru.edu/pub/bash/bash-4.3.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/glibc/glibc-2.22.tar.gz
-${fetch_cmd} ftp://sunsite.icm.edu.pl/pub/programming/tcl/tcl8_6/tcl8.6.4-src.tar.gz # official ftp mirror per upstream
-${fetch_cmd} ftp://ftp.mirrorservice.org/sites/dl.sourceforge.net/pub/sourceforge/e/ex/expect/Expect/5.45/expect5.45.tar.gz # sourceforge hates ftp and curl
-${fetch_cmd} ftp://ftp.gnu.org/gnu/dejagnu/dejagnu-1.5.3.tar.gz
-${fetch_cmd} ftp://ftp.mirrorservice.org/sites/dl.sourceforge.net/pub/sourceforge/c/ch/check/check/0.10.0/check-0.10.0.tar.gz # sourceforge hates ftp and curl
-${fetch_cmd} ftp://ftp.gnu.org/gnu//ncurses/ncurses-6.0.tar.gz
-${fetch_cmd} ftp://mirrors.rit.edu/gentoo/distfiles/bzip2-1.0.6.tar.gz # bzip2 hates ftp and curl
-${fetch_cmd} ftp://ftp.gnu.org/gnu/diffutils/diffutils-3.3.tar.xz
-${fetch_cmd} ftp://mirrors.rit.edu/gentoo/distfiles/file-5.25.tar.gz # upstream has super unstable ftp server
-${fetch_cmd} ftp://ftp.gnu.org/gnu/findutils/findutils-4.6.0.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/gawk/gawk-4.1.3.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/gettext/gettext-latest.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/grep/grep-2.22.tar.xz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/gzip/gzip-1.6.tar.xz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/m4/m4-latest.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/make/make-4.1.tar.gz
-${fetch_cmd} ftp://ftp.cpan.org/pub/CPAN/src/perl-5.22.1.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/sed/sed-4.2.2.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/tar/tar-latest.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/texinfo/texinfo-6.0.tar.gz
-${fetch_cmd} ftp://ftp.kernel.org/pub/linux/utils/util-linux/v2.27/util-linux-2.27.1.tar.gz
-${fetch_cmd} ftp://mirrors.rit.edu/gentoo/distfiles/xz-5.2.2.tar.gz # upstream hates curl and ftp gives an access denied
-${fetch_cmd} ftp://gentoo.mirrors.pair.com/distfiles/fish-2.2.0.tar.gz # upstream doesn't have ftp and has unreliable http
-${fetch_cmd} ftp://ftp.ussg.iu.edu/pub/linux/gentoo/distfiles/tcsh-6.19.00.tar.gz # upstream has super unstable ftp server
-
+echo "Fetching source tarballs (if necessary) and cleaning up from previous builds (if necessary). This may take a while..."
+# using the official LFS mirror- ftp://mirrors-usa.go-parts.com/lfs/lfs-packages/7.8/- because upstream sites/mirrors are stupid and do things like not support RETRY.
+# luckily, they bundle the entire archive in one handy tarball.
+find . -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
+find . -maxdepth 1 -ignore_readdir_race -type f -not -name "*.tar" -delete > /dev/null 2>&1
+if [ -f "lfs-packages-7.8.tar" ];
+then
+	if type md5sum > /dev/null 2>&1;
+	then
+		echo "Checking integrity..."
+		${fetch_cmd} http://mirrors-usa.go-parts.com/lfs/lfs-packages/MD5SUMS
+		sed -i -e '/\ lfs-packages-7.8.tar$/!d' MD5SUMS
+		set +e
+		$(which md5sum) -c MD5SUMS
+		if [ "$?" != '0' ];
+		then
+			echo "MD5 checksum failed. Try deleting ${PSRC}/lfs-packages-7.8.tar and re-running."
+			exit 1
+		fi
+		set -e
+	fi
+else
+	${fetch_cmd} ftp://mirrors-usa.go-parts.com/lfs/lfs-packages/lfs-packages-7.8.tar # ftp is faster for larger files, http is faster for smaller ones.
+	if type md5sum > /dev/null 2>&1;
+	then
+		echo "Checking integrity..."
+		${fetch_cmd} http://mirrors-usa.go-parts.com/lfs/lfs-packages/MD5SUMS
+		sed -i -e '/\ lfs-packages-7.8.tar$/!d' MD5SUMS
+		set +e
+		$(which md5sum) -c MD5SUMS
+		if [ "$?" != '0' ];
+		then
+			echo "MD5 checksum failed. Try deleting ${PSRC}/lfs-packages-7.8.tar and re-running."
+			exit 1
+		fi
+		set -e
+	fi
+fi
+echo "Extracting main packageset..."
+tar --totals -xf lfs-packages-7.8.tar
+cd 7.8
+mv * ../.
+cd ..
+rmdir 7.8
+echo "Fetching newer versions of select software..."
+${fetch_cmd} http://mirrors.concertpass.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz
+${fetch_cmd} https://gmplib.org/download/gmp/gmp-6.1.0.tar.bz2
 
 echo
+
+
 
 ############################################
 # BUILDING BOOTSTRAP ENVIRONMENT IN /TOOLS #
@@ -189,8 +210,8 @@ case $(uname -m) in
   x86_64) ln -s /tools/lib /tools/lib64 ;;
 esac
 cd ${PSRC}
-tar xfz binutils-2.25.tar.gz
-cd binutils-2.25
+tar xfj binutils-2.25.1.tar.bz2
+cd binutils-2.25.1
 echo "[Binutils] Configuring..."
 ./configure --prefix=/tools     \
     --with-sysroot=$PUR                 \
@@ -214,7 +235,7 @@ echo "[GCC] MPFR"
 cd ${PSRC}
 tar xfz gcc-5.3.0.tar.gz
 cd gcc-5.3.0
-tar xfz ../mpfr-3.1.3.tar.gz
+tar xfJ ../mpfr-3.1.3.tar.xz
 mv mpfr-3.1.3 mpfr
 
 # MPC
@@ -786,3 +807,5 @@ ${fetch_cmd} https://raw.githubusercontent.com/RainbowHackz/Pur-Linux/master/chr
 chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
 chroot ./ /chrootboot.sh
+
+rm -f ${PSRC}/lfs-packages-7.8.tar
