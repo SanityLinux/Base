@@ -108,3 +108,8 @@ Q: IRC?
 
 A: #purlinux on irc.freenode.net 
 Come say hi!
+
+Q: Primary Project Master repo?
+
+A: On Github, the primary master repo is at https://github.com/RainbowHackz/Pur-Linux/  
+Other people may have forks.
