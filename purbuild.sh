@@ -2,11 +2,11 @@
 set -e
 ## For moar debugging, before you run the script, run
 ## 	export PS4='Line ${LINENO}: '
-##  (or add "PS4='Line ${LINENO}: '" (without the double-quotes) to your ~/.bashrc)
+##  (or add to your ~/.bashrc)
 ## That prints the line number of the current command
 ## (and with set -x, the actual command) for the script
 ## being run.-bts,Tue Jan 19 07:29:38 EST 2016
-if [ "${PS4}" != '+ ' ];
+if [ "${PS4}" == 'Line ${LINENO}: ' ];
 then
 	set -x
 fi
@@ -104,7 +104,6 @@ echo
 #rm -rf ${HOME}/purroot
 mkdir -p ${HOME}/purroot
 PUR=${HOME}/purroot
-export PUR
 PLOGS=${PUR}/logs
 rm -rf ${PLOGS}
 mkdir -p ${PLOGS}
@@ -121,14 +120,12 @@ sudo rm -rf /tools
 sudo ln -s ${PUR}/tools /tools
 
 PTLS=${PUR}/tools
-export PTLS
 rm -rf ${PTLS}/include
 mkdir -p ${PTLS}/include
 PATH=${PTLS}/bin:/usr/local/bin:/bin:/usr/bin
-export LC_ALL PUR_TGT PATH PBLD
 GLIBCVERS=2.22
 HOSTGLIBCVERS=2.11
-export GLIBCVERS HOSTGLIBCVERS
+export LC_ALL PUR_TGT PATH PBLD GLIBCVERS HOSTGLIBCVERS
 
 rm -rf ${HOME}/specs
 mkdir -p ${HOME}/specs
@@ -151,13 +148,13 @@ echo "Fetching source tarballs (if necessary) and cleaning up from previous buil
 # using the official LFS mirror- ftp://mirrors-usa.go-parts.com/lfs/lfs-packages/7.8/- because upstream sites/mirrors are stupid and do things like not support RETRY.
 # luckily, they bundle the entire archive in one handy tarball.
 find . -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
-find . -maxdepth 1 -ignore_readdir_race -type f -not -name "*.tar" -delete > /dev/null 2>&1
+find . -maxdepth 1 -ignore_readdir_race -type f -not -name "pur_src*.tar.xz" -delete > /dev/null 2>&1
 if [ -f "pur_src.0.0.1a.tar.xz" ];
 then
 	if type sha256sum > /dev/null 2>&1;
 	then
 		echo "Checking integrity..."
-		${fetch_cmd} http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
+		${fetch_cmd} -s http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
 		set +e
 		$(which sha256sum) -c pur_src.0.0.1a.tar.xz.sha256
 		if [ "$?" != '0' ];
@@ -172,7 +169,7 @@ else
 	if type sha256sum > /dev/null 2>&1;
 	then
 		echo "Checking integrity..."
-		${fetch_cmd} http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
+		${fetch_cmd} -s http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
 		set +e
 		$(which sha256sum) -c pur_src.0.0.1a.tar.xz.sha256
 		if [ "$?" != '0' ];
@@ -801,4 +798,4 @@ chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
 chroot ./ /chrootboot.sh
 
-rm -f ${PSRC}/pur_src.0.0.1a.tar.xz
+rm -f ${PSRC}/pur_src.0.0.1a.tar.xz{,.sha256}
