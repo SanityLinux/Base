@@ -13,7 +13,7 @@
 # sed@ftp://ftp.gnu.org/gnu/sed/sed-4.2.2.tar.gz # GNU sed
 # (etc.)
 # NOTE: for sanity reasons, you'll want the LAST actual URL- the TRUE URL- not a redirect.
-# you can get this with curl -sIL <url>, look for any "Location: directives- those are redirects.
+# you can get this with curl -sIL <url>, look for any "Location:" directives- those are redirects.
 
 import re
 import time
@@ -26,7 +26,17 @@ upstream = open('./urls.txt','r')
 def getNewVer(name,filename,urlbase,cur_ver, comment):
 	# build a list of the version
 	_cur_ver = cur_ver.split('.')
-	
+
+	rel_iter = 0
+	for release in _cur_ver:
+		while rel_iter >= 20:
+			new_rel = int(release) + 1
+			filename = re.sub(release,str(new_rel),filename)
+			baseurl = re.sub('/{0}/',str(new_rel),filename).format(release)
+
+		req = urllib.request.Request(
+			urlbase+
+
 	#get the response...
 	req = urllib.request.Request(
 		urlbase + filename, 
@@ -65,22 +75,22 @@ for source in upstream:
 	urlbase = '/'.join(url.split('/')[:-1]) + '/'
 	filename = ''.join(url.split('/')[-1])
 
-	# stupid projects not keeping proper naming standards. so we need to munge some filenames for getting the version number.
+	# stupid projects not keeping proper naming standards.
+	# so we need to munge some filenames for getting the version number.
 	if name == 'check':
 		munged_fn = ('{0}-{1}').format(name,filename)
 	elif name == 'expect':
 		munged_fn = re.sub('^{0}','{0}-',filename).format(name)
 	elif name == 'tcl':
-		# didn't feel like making a dict, setting up a class/function, etc. just to do this. so multiple iterations on the same string, because lazy.
+		# didn't feel like making a dict, setting up a class/function, etc.
+		#  just to do this. so multiple iterations on the same string, because lazy.
 		munged_fn = re.sub(name,name + '-',filename)
 		munged_fn = re.sub('-src','',munged_fn)
 	else:
 		munged_fn = filename
-#	filename = ''.join(filename)
 
 	# now we get the current version number
 	cur_ver = re.split('^' + name + '-',munged_fn)
 	cur_ver = re.sub('(\.tgz|\.zip|\.tar(\..*)?)$','',cur_ver[1])
 
 	new_ver = getNewVer(name,filename,urlbase,cur_ver,comment)
-#print(name + ' ' + filename + ' ' + urlbase + ' ' + cur_ver)

@@ -765,7 +765,10 @@ make install >> ${PLOGS}/xz_make.1 2>&1
 
 # Stripping bootstrap env
 strip --strip-debug /tools/lib/*
+# this strip dies because some /usr/bin's are actually bash scripts, so...
+set +e
 /usr/bin/strip --strip-unneeded /tools/{,s}bin/*
+set -e
 rm -rf /tools/{,share}/{info,man,doc}
 
 # CHOWNing Bootstrap
