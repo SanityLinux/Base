@@ -28,16 +28,16 @@ def getNewVer(name,filename,urlbase,cur_ver, comment):
 	_cur_ver = cur_ver.split('.')
 
 	rel_iter = 0
-	for release in _cur_ver:
-		while rel_iter >= 20:
-			new_rel = int(release) + 1
-			filename = re.sub(release,str(new_rel),filename)
-			baseurl = re.sub('/{0}/',str(new_rel),filename).format(release)
+	#for release in _cur_ver:
+	#	while rel_iter >= 20:
+	#		new_rel = int(release) + 1
+	#		filename = re.sub(release,str(new_rel),filename)
+	#		baseurl = re.sub('/{0}/',str(new_rel),filename).format(release)
 
-		req = urllib.request.Request(
-			urlbase+
+		#req = urllib.request.Request(
+		#	urlbase+
 
-	#get the response...
+	# health check (with protozoan logging) of upstream mirrors, so we can debug possible issues
 	req = urllib.request.Request(
 		urlbase + filename, 
 		data=None, 
