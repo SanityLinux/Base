@@ -6,7 +6,7 @@ set -e
 ## That prints the line number of the current command
 ## (and with set -x, the actual command) for the script
 ## being run.-bts,Tue Jan 19 07:29:38 EST 2016
-if [ "${PS4}" != '+' ];
+if [ "${PS4}" != '+ ' ];
 then
 	set -x
 fi
@@ -133,7 +133,7 @@ export GLIBCVERS HOSTGLIBCVERS
 rm -rf ${HOME}/specs
 mkdir -p ${HOME}/specs
 sudo ln -s ${HOME}/specs /specs
-if [ "${user}" == 'bts' ];
+if [ "${USER}" == 'bts' ];
 then
 	export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
 fi
@@ -152,48 +152,43 @@ echo "Fetching source tarballs (if necessary) and cleaning up from previous buil
 # luckily, they bundle the entire archive in one handy tarball.
 find . -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
 find . -maxdepth 1 -ignore_readdir_race -type f -not -name "*.tar" -delete > /dev/null 2>&1
-if [ -f "lfs-packages-7.8.tar" ];
+if [ -f "pur_src.0.0.1a.tar.xz" ];
 then
-	if type md5sum > /dev/null 2>&1;
+	if type sha256sum > /dev/null 2>&1;
 	then
 		echo "Checking integrity..."
-		${fetch_cmd} http://mirrors-usa.go-parts.com/lfs/lfs-packages/MD5SUMS
-		sed -i -e '/\ lfs-packages-7.8.tar$/!d' MD5SUMS
+		${fetch_cmd} http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
 		set +e
-		$(which md5sum) -c MD5SUMS
+		$(which sha256sum) -c pur_src.0.0.1a.tar.xz.sha256
 		if [ "$?" != '0' ];
 		then
-			echo "MD5 checksum failed. Try deleting ${PSRC}/lfs-packages-7.8.tar and re-running."
+			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.0.0.1a.tar.xz and re-running."
 			exit 1
 		fi
 		set -e
 	fi
 else
-	${fetch_cmd} ftp://mirrors-usa.go-parts.com/lfs/lfs-packages/lfs-packages-7.8.tar # ftp is faster for larger files, http is faster for smaller ones.
-	if type md5sum > /dev/null 2>&1;
+	${fetch_cmd} http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz
+	if type sha256sum > /dev/null 2>&1;
 	then
 		echo "Checking integrity..."
-		${fetch_cmd} http://mirrors-usa.go-parts.com/lfs/lfs-packages/MD5SUMS
-		sed -i -e '/\ lfs-packages-7.8.tar$/!d' MD5SUMS
+		${fetch_cmd} http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
 		set +e
-		$(which md5sum) -c MD5SUMS
+		$(which sha256sum) -c pur_src.0.0.1a.tar.xz.sha256
 		if [ "$?" != '0' ];
 		then
-			echo "MD5 checksum failed. Try deleting ${PSRC}/lfs-packages-7.8.tar and re-running."
+			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.0.0.1a.tar.xz and re-running."
 			exit 1
 		fi
 		set -e
 	fi
 fi
 echo "Extracting main packageset..."
-tar --totals -xf lfs-packages-7.8.tar
-cd 7.8
+tar --totals -Jxf pur_src.0.0.1a.tar.xz
+cd pur_src
 mv * ../.
 cd ..
-rmdir 7.8
-echo "Fetching newer versions of select software..."
-${fetch_cmd} http://mirrors.concertpass.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz
-${fetch_cmd} https://gmplib.org/download/gmp/gmp-6.1.0.tar.bz2
+rmdir pur_src
 
 echo
 
@@ -303,7 +298,7 @@ cp -r dest/include/* /tools/include
 # Building glibc - first pass
 echo "GlibC - first pass."
 cd ${PSRC}
-tar xfz glibc-${GLIBCVERS}.tar.gz
+tar xfJ glibc-${GLIBCVERS}.tar.xz
 mkdir ${PSRC}/glibc-build
 cd glibc-build
 echo "[GlibC] Configuring..."
@@ -367,16 +362,16 @@ mkdir -p ${PSRC}/binutils-build
 echo "[Binutils] Cleaning from first pass..."
 #cd ${PSRC}/binutils-2.25
 #make distclean > ${PLOGS}/binutils_pre-clean.2 2>&1 ## fuck this shit. keeps throwing an error. let's just start from scratch.
-rm -rf ${PSRC}/binutils-2.25
+rm -rf ${PSRC}/binutils-2.25.1
 cd ${PSRC}
-tar xfz binutils-2.25.tar.gz
-cd binutils-2.25
+tar xfj binutils-2.25.1.tar.bz2
+cd binutils-2.25.1
 cd ${PSRC}/binutils-build
 echo "[Binutils] Configuring..."
 CC=${PUR_TGT}-gcc                \
 AR=${PUR_TGT}-ar                 \
 RANLIB=${PUR_TGT}-ranlib         \
-../binutils-2.25/configure     \
+../binutils-2.25.1/configure     \
     --prefix=/tools            \
     --disable-nls              \
     --disable-werror           \
@@ -415,7 +410,7 @@ cd ${PSRC}/gcc-build
 make distclean > ${PLOGS}/gcc_pre-clean.2 2>&1
 cd ${PSRC}/gcc-5.3.0
 echo "[GCC] MPFR"
-tar xfz ../mpfr-3.1.3.tar.gz
+tar xfJ ../mpfr-3.1.3.tar.xz
 mv mpfr-3.1.3 mpfr
 # MPC
 echo "[GCC] MPC"
@@ -468,9 +463,7 @@ fi
 echo "Running further tests..."
 # TCL
 cd ${PSRC}
-tar xfz tcl8.6.4-src.tar.gz
-$tar xfz core_8_6_4.tar.gz # if we're using github...
-$mv tcl-core_8_6_4 tcl8.6.4
+tar xfz tcl8.6.4-src.tar.gz 
 cd tcl8.6.4
 cd unix
 echo "[TCL] Configuring..."
@@ -541,8 +534,8 @@ make install >> ${PLOGS}/ncurses_make.1 2>&1
 
 #bash
 cd ${PSRC}
-tar xfz bash-4.3.tar.gz
-cd bash-4.3
+tar xfz bash-4.3.30.tar.gz
+cd bash-4.3.30
 echo "[Bash] Configuring..."
 ./configure --prefix=/tools --without-bash-malloc > ${PLOGS}/bash_configure.1 2>&1
 
@@ -562,8 +555,8 @@ make PREFIX=/tools install >> ${PLOGS}/bzip2_make.1 2>&1
 
 #Coreutils
 cd ${PSRC}
-tar xfJ coreutils-8.24.tar.xz
-cd coreutils-8.24
+tar xfJ coreutils-8.25.tar.xz
+cd coreutils-8.25
 echo "[Coreutils] Configuring..."
 ./configure --prefix=/tools --enable-install-program=hostname > ${PLOGS}/coreutils_configure.1 2>&1
 
@@ -581,7 +574,7 @@ echo "[Diffutils] Configuring..."
 
 echo "[Diffutils] Building..."
 make > ${PLOGS}/diffutils_make.1 2>&1
-make check >> ${PLOGS}/diffutils_make.1 2>&1
+# make check >> ${PLOGS}/diffutils_make.1 2>&1
 make install >> ${PLOGS}/diffutils_make.1 2>&1
 
 # File
@@ -610,7 +603,7 @@ make install >> ${PLOGS}/findutils_makee.1 2>&1
 
 # GAWK
 cd ${PSRC}
-tar xfz gawk-4.1.3.tar.gz
+tar xfJ gawk-4.1.3.tar.xz
 cd gawk-4.1.3
 echo "[Gawk] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/gawk_configure.1 2>&1
@@ -622,7 +615,7 @@ make install >> ${PLOGS}/gawk_make.1 2>&1
 
 #gettext
 cd ${PSRC}
-tar xfz gettext-latest.tar.gz
+tar xfz gettext-0.19.7.tar.gz
 cd gettext-*
 cd gettext-tools
 echo "[Gettext] Configuring..."
@@ -662,19 +655,19 @@ make install >> ${PLOGS}/gzip_make.1 2>&1
 
 # M4
 cd ${PSRC}
-tar xfz m4-latest.tar.gz
+tar xfJ m4-1.4.17.tar.xz
 cd m4-*
 echo "[M4] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/m4_configure.1 2>&1
 
 echo "[M4] Building..."
 make > ${PLOGS}/m4_make.1 2>&1
-make check >> ${PLOGS}/m4_make.1 2>&1
+#make check >> ${PLOGS}/m4_make.1 2>&1
 make install >> ${PLOGS}/m4_make.1 2>&1
 
 # GNU Make
 cd ${PSRC}
-tar xfz make-4.1.tar.gz
+tar xfj make-4.1.tar.bz2
 cd make-4.1
 echo "[Make] Configuring..."
 ./configure --prefix=/tools --without-guile > ${PLOGS}/make_configure.1 2>&1
@@ -686,7 +679,7 @@ make install >> ${PLOGS}/make_make.1 2>&1
 
 #GNU Patch
 cd ${PSRC}
-tar xfz patch-2.7.5.tar.gz
+tar xfJ patch-2.7.5.tar.xz
 cd patch-2.7.5
 echo "[Patch] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/patch_configure.1 2>&1
@@ -706,12 +699,12 @@ sh Configure -des -Dprefix=/tools -Dlibs=-lm > ${PLOGS}/perl_configure.1 2>&1
 echo "[Perl] Building..."
 make > ${PLOGS}/perl_make.1 2>&1
 cp perl cpan/podlators/pod2man /tools/bin
-mkdir -p /tools/lib/perl5/5.22.0
-cp -R lib/* /tools/lib/perl5/5.22.0
+mkdir -p /tools/lib/perl5/5.22.1
+cp -R lib/* /tools/lib/perl5/5.22.1
 
 #GNU Sed
 cd ${PSRC}
-tar xfz sed-4.2.2.tar.gz
+tar xfj sed-4.2.2.tar.bz2
 cd sed-4.2.2
 echo "[Sed] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/sed_configure.1 2>&1
@@ -723,7 +716,7 @@ make install >> ${PLOGS}/sed_make.1 2>&1
 
 #GNU Tar
 cd ${PSRC}
-tar xfz tar-latest.tar.gz
+tar xfJ tar-1.28.tar.xz
 cd tar-*
 echo "[Tar] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/tar_configure.1 2>&1
@@ -808,4 +801,4 @@ chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
 chroot ./ /chrootboot.sh
 
-rm -f ${PSRC}/lfs-packages-7.8.tar
+rm -f ${PSRC}/pur_src.0.0.1a.tar.xz
