@@ -4,3 +4,5 @@
 tools/releasechk/urls.txt.new
 # checker err log
 tools/releasechk/urls.error.log
+# ignore PyCharm files
+.idea
