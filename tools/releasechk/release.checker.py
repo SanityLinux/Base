@@ -15,11 +15,13 @@
 # NOTE: for sanity reasons, you'll want the LAST actual URL- the TRUE URL- not a redirect.
 # you can get this with curl -sIL <url>, look for any "Location:" directives- those are redirects.
 
+import os
 import re
 import time
 import urllib.request
 import urllib.parse
 import urllib.request
+import ftplib
 
 upstream = open('./urls.txt','r')
 
@@ -28,11 +30,11 @@ def getNewVer(name,filename,urlbase,cur_ver, comment):
 	_cur_ver = cur_ver.split('.')
 
 	rel_iter = 0
-	#for release in _cur_ver:
-	#	while rel_iter >= 20:
-	#		new_rel = int(release) + 1
-	#		filename = re.sub(release,str(new_rel),filename)
-	#		baseurl = re.sub('/{0}/',str(new_rel),filename).format(release)
+	for release in _cur_ver:
+		while rel_iter >= 20:
+			new_rel = int(release) + 1
+			filename = re.sub(release,str(new_rel),filename)
+			baseurl = re.sub('/{0}/',str(new_rel),filename).format(release)
 
 		#req = urllib.request.Request(
 		#	urlbase+
@@ -49,38 +51,49 @@ def getNewVer(name,filename,urlbase,cur_ver, comment):
 		source_web = urllib.request.urlopen(req)
 	except urllib.error.URLError as e:
 		if hasattr(e, 'reason'):
-			print(name + ' failed: ', e.reason)
-			with open("urls.txt.new", "a") as genfile: genfile.write('{0}@{1}{2}{3}').format(name,urlbase,filename,comment)
-			with open('urls.error.log', 'a') as errfile: errfile.write('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,str(e.code),e.reason)
+			print(name + ' failed: ',str(e.reason))
+			with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}').format(name,urlbase,filename,comment))
+			#if e.code:
+			#	with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,e.code,e.reason))
+			#else:
+			with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2})\n').format(str(int(time.time())),name,e.reason))
 		elif hasattr(e, 'code'):
-			print(name + ' failed: ',e.code)
-			with open("urls.txt.new", "a") as genfile: genfile.write('{0}@{1}{2}{3}').format(name,urlbase,filename,comment)
-			with open('urls.error.log', 'a') as errfile: errfile.write('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code))
+			print('{0} failed: ',str(e.code))
+			with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}').format(name,urlbase,filename,comment))
+			with open('urls.error.log',"a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code)))
+		else:
+			print(('{0} failed: ',''.join(e)).format(name))
+#	ftplib.error_perm: 550 Failed to change directory
+	except ftplib.all_errors as e:
+		print(e)
+		with open("urls.error.log","a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e)))
 	else:
-		with open("urls.txt.new", "a") as genfile:
-			genfile.write('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment)
+		with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
 
 
 	 
 
 for source in upstream:
-	# parse the line
+	# parse the line, and skip empty lines/just comments
+	if re.fullmatch('^\s*(#.*)?\s*$',source):
+		break
 	line = source.split('@')
 	name = line[0]
 	url = re.sub('(\s*#.*$|\n)','',''.join(line[1]))
-	if re.match('\s*#.*$',source):
-		comment = '#'.join(source.split('#')[1:])
+	if re.search('\s*#.*$\n?',source):
+		comment = '#' + '#'.join(source.split('#')[1:])
 	else:
 		comment = ''
 	urlbase = '/'.join(url.split('/')[:-1]) + '/'
 	filename = ''.join(url.split('/')[-1])
+	print(url)
 
 	# stupid projects not keeping proper naming standards.
 	# so we need to munge some filenames for getting the version number.
 	if name == 'check':
 		munged_fn = ('{0}-{1}').format(name,filename)
 	elif name == 'expect':
-		munged_fn = re.sub('^{0}','{0}-',filename).format(name)
+		munged_fn = re.sub('^'+name,name+'-',filename).format(name)
 	elif name == 'tcl':
 		# didn't feel like making a dict, setting up a class/function, etc.
 		#  just to do this. so multiple iterations on the same string, because lazy.
@@ -94,3 +107,5 @@ for source in upstream:
 	cur_ver = re.sub('(\.tgz|\.zip|\.tar(\..*)?)$','',cur_ver[1])
 
 	new_ver = getNewVer(name,filename,urlbase,cur_ver,comment)
+
+os.rename('urls.txt.new','urls.txt')

@@ -2,6 +2,7 @@
 *.swp
 # checker temp files
 tools/releasechk/urls.txt.new
+tools/releasechk/urls.txt.bak
 # checker err log
 tools/releasechk/urls.error.log
 # ignore PyCharm files

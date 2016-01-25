@@ -108,7 +108,18 @@ PLOGS=${PUR}/logs
 rm -rf ${PLOGS}
 mkdir -p ${PLOGS}
 
-rm -rf ${PUR}/tools
+# clean up from previous failed runs
+if [ -z {$PUR} ];
+then
+	echo "PUR VARIABLE IS UNSET! further process will cause host system damage."
+	exit 1
+fi
+set +e
+sudo umount ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
+sudo rm -rf ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
+set -e
+# sudo is needed if tools has been chown'd
+sudo rm -rf ${PUR}/tools
 mkdir -p ${PUR}/tools
 mkdir -p ${PUR}/sources
 #rm -rf ${PUR}/sources
@@ -764,9 +775,9 @@ make install >> ${PLOGS}/xz_make.1 2>&1
 
 
 # Stripping bootstrap env
-strip --strip-debug /tools/lib/*
-# this strip dies because some /usr/bin's are actually bash scripts, so...
+# strip throws a non-0 because some /usr/bin's are actually bash scripts, etc.
 set +e
+strip --strip-debug /tools/lib/*
 /usr/bin/strip --strip-unneeded /tools/{,s}bin/*
 set -e
 rm -rf /tools/{,share}/{info,man,doc}
@@ -799,6 +810,6 @@ cd ${PUR}
 ${fetch_cmd} https://raw.githubusercontent.com/RainbowHackz/Pur-Linux/master/chrootboot.sh
 chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
-chroot ./ /chrootboot.sh
+sudo chroot ./ /chrootboot.sh
 
 rm -f ${PSRC}/pur_src.0.0.1a.tar.xz{,.sha256}
