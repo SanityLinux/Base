@@ -1,2 +1,9 @@
 # we don't want vim swap files accidentally committed. probably should have added this a bit ago
 *.swp
+# checker temp files
+tools/releasechk/urls.txt.new
+tools/releasechk/urls.txt.bak
+# checker err log
+tools/releasechk/urls.error.log
+# ignore PyCharm files
+.idea
