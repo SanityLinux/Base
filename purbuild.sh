@@ -1,9 +1,15 @@
 #!/bin/bash
 set -e
-## For moar debugging, you can add set -x below this line and in your shell, before you run the script, run
+## For moar debugging, before you run the script, run
 ## 	export PS4='Line ${LINENO}: '
-## That prints the line number of the current command (and with set -x, the actual command) for the script
+##  (or add to your ~/.bashrc)
+## That prints the line number of the current command
+## (and with set -x, the actual command) for the script
 ## being run.-bts,Tue Jan 19 07:29:38 EST 2016
+if [ "${PS4}" == 'Line ${LINENO}: ' ];
+then
+	set -x
+fi
 purlogo() {
 cat <<"EOT"
             _   _
@@ -46,13 +52,11 @@ purlogo
 # gawk
 # GNU 'bison' 2.7 or later
 # patch
+# libencode-perl
 # wget or curl
 
 #Uncomment the following Line for Debian 8
 # apt-get install gcc g++ make libgmp-dev libmpfr-dev libmpc-dev gawk bison patch sudo texinfo file flex xz-utils
-
-# Arch Linux: Install base-devel
-# pacman -Syu && pacman -Sy base-devel
 
 #Important: Key Verification of packages is being implemented in an automated method,
 # where this script will fail and print to your screen if a key fails. It requires GPG to be installed
@@ -82,9 +86,9 @@ echo
 
 # Are we using curl or wget?
 if ! type curl > /dev/null 2>&1; then
-        fetch_cmd="$(which wget) -cq --tries=5 --waitretry 3 -a /tmp/fetch.log"
+        fetch_cmd="$(which wget) -c --progress=bar --tries=5 --waitretry 3 -a /tmp/fetch.log"
 else
-        fetch_cmd="$(which curl) -LOsSf --retry 5 --retry-delay 3 -C -"
+        fetch_cmd="$(which curl) --progress-bar -LSOf --retry 5 --retry-delay 3 -C -"
 fi
 
 
@@ -100,12 +104,22 @@ echo
 #rm -rf ${HOME}/purroot
 mkdir -p ${HOME}/purroot
 PUR=${HOME}/purroot
-export PUR
 PLOGS=${PUR}/logs
 rm -rf ${PLOGS}
 mkdir -p ${PLOGS}
 
-rm -rf ${PUR}/tools
+# clean up from previous failed runs
+if [ -z "${PUR}" ];
+then
+	echo "PUR VARIABLE IS UNSET! further process will cause host system damage."
+	exit 1
+fi
+set +e
+sudo umount -l ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
+sudo rm -rf ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
+set -e
+# sudo is needed if tools has been chown'd
+sudo rm -rf ${PUR}/tools
 mkdir -p ${PUR}/tools
 mkdir -p ${PUR}/sources
 #rm -rf ${PUR}/sources
@@ -117,66 +131,76 @@ sudo rm -rf /tools
 sudo ln -s ${PUR}/tools /tools
 
 PTLS=${PUR}/tools
-export PTLS
 rm -rf ${PTLS}/include
 mkdir -p ${PTLS}/include
 PATH=${PTLS}/bin:/usr/local/bin:/bin:/usr/bin
-export LC_ALL PUR_TGT PATH PBLD
 GLIBCVERS=2.22
 HOSTGLIBCVERS=2.11
-export GLIBCVERS HOSTGLIBCVERS
+export LC_ALL PUR_TGT PATH PBLD GLIBCVERS HOSTGLIBCVERS
 
 rm -rf ${HOME}/specs
 mkdir -p ${HOME}/specs
 sudo ln -s ${HOME}/specs /specs
-# Uncomment the next line for multicore systems. Commented out for debugging purposes.
-# We can not guarantee things will build correctly with parallel compilation.
-# export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
+if [ "${USER}" == 'bts' ];
+then
+	export MAKEFLAGS="-j $(($(egrep '^processor[[:space:]]*:' /proc/cpuinfo | wc -l)+1))"
+fi
+ulimit -n 512 ## Needed for building GNU Make on Debian
+
+
 
 #Eventually, I'll move hardcoded file locations to use variables instead
 #Variables will be set below here, so it'll fetch ftp://blahblah.blah/$bash.tar.gz
 #instead of hunting and replacing each line. 
 
-#Wgetting everything. Move untarring up here at some point too.
+#Fetching everything. Move untarring up here at some point too.
 cd ${PSRC}
-echo "Fetching source tarballs (if necessary). This may take a while..."
-echo "If you have curl installed, errors will display on STDERR. Otherwise if using wget, errors will be logged to /tmp/fetch.log"
-${fetch_cmd} http://www.mpfr.org/mpfr-current/mpfr-3.1.3.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/binutils/binutils-2.25.tar.gz
-${fetch_cmd} ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.3.tar.gz
-${fetch_cmd} http://mirrors.concertpass.com/gcc/releases/gcc-5.3.0/gcc-5.3.0.tar.gz
-${fetch_cmd} https://gmplib.org/download/gmp/gmp-6.1.0.tar.bz2
-${fetch_cmd} https://www.busybox.net/downloads/busybox-1.24.1.tar.bz2
-${fetch_cmd} https://www.kernel.org/pub/linux/kernel/v4.x/linux-4.4.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/coreutils/coreutils-8.24.tar.xz
-${fetch_cmd} ftp://ftp.cwru.edu/pub/bash/bash-4.3.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/glibc/glibc-2.22.tar.gz
-${fetch_cmd} http://downloads.sourceforge.net/tcl/tcl8.6.4-src.tar.gz
-${fetch_cmd} http://prdownloads.sourceforge.net/expect/expect5.45.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/dejagnu/dejagnu-1.5.3.tar.gz
-${fetch_cmd} http://sourceforge.net/projects/check/files/check/0.10.0/check-0.10.0.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu//ncurses/ncurses-6.0.tar.gz
-${fetch_cmd} http://www.bzip.org/1.0.6/bzip2-1.0.6.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/diffutils/diffutils-3.3.tar.xz
-${fetch_cmd} ftp://ftp.astron.com/pub/file/file-5.25.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/findutils/findutils-4.6.0.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/gawk/gawk-4.1.3.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/gettext/gettext-latest.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/grep/grep-2.22.tar.xz
-${fetch_cmd} http://ftp.gnu.org/gnu/gzip/gzip-1.6.tar.xz
-${fetch_cmd} http://ftp.gnu.org/gnu/m4/m4-latest.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/make/make-4.1.tar.gz
-${fetch_cmd} http://www.cpan.org/src/5.0/perl-5.22.1.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/patch/patch-2.7.5.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/sed/sed-4.2.2.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/tar/tar-latest.tar.gz
-${fetch_cmd} http://ftp.gnu.org/gnu/texinfo/texinfo-6.0.tar.gz
-${fetch_cmd} https://www.kernel.org/pub/linux/utils/util-linux/v2.27/util-linux-2.27.1.tar.gz
-${fetch_cmd} http://tukaani.org/xz/xz-5.2.2.tar.gz
-${fetch_cmd} http://fishshell.com/files/2.2.0/fish-2.2.0.tar.gz
-${fetch_cmd} ftp://ftp.astron.com/pub/tcsh/tcsh-6.19.00.tar.gz
+echo "Fetching source tarballs (if necessary) and cleaning up from previous builds (if necessary). This may take a while..."
+# using the official LFS mirror- ftp://mirrors-usa.go-parts.com/lfs/lfs-packages/7.8/- because upstream sites/mirrors are stupid and do things like not support RETRY.
+# luckily, they bundle the entire archive in one handy tarball.
+find . -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
+find . -maxdepth 1 -ignore_readdir_race -type f -not -name "pur_src*.tar.xz" -delete > /dev/null 2>&1
+if [ -f "pur_src.0.0.1a.tar.xz" ];
+then
+	if type sha256sum > /dev/null 2>&1;
+	then
+		echo "Checking integrity..."
+		${fetch_cmd} -s http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
+		set +e
+		$(which sha256sum) -c pur_src.0.0.1a.tar.xz.sha256
+		if [ "$?" != '0' ];
+		then
+			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.0.0.1a.tar.xz and re-running."
+			exit 1
+		fi
+		set -e
+	fi
+else
+	${fetch_cmd} http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz
+	if type sha256sum > /dev/null 2>&1;
+	then
+		echo "Checking integrity..."
+		${fetch_cmd} -s http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
+		set +e
+		$(which sha256sum) -c pur_src.0.0.1a.tar.xz.sha256
+		if [ "$?" != '0' ];
+		then
+			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.0.0.1a.tar.xz and re-running."
+			exit 1
+		fi
+		set -e
+	fi
+fi
+echo "Extracting main packageset..."
+tar --totals -Jxf pur_src.0.0.1a.tar.xz
+cd pur_src
+mv * ../.
+cd ..
+rmdir pur_src
 
 echo
+
+
 
 ############################################
 # BUILDING BOOTSTRAP ENVIRONMENT IN /TOOLS #
@@ -189,8 +213,8 @@ case $(uname -m) in
   x86_64) ln -s /tools/lib /tools/lib64 ;;
 esac
 cd ${PSRC}
-tar xfz binutils-2.25.tar.gz
-cd binutils-2.25
+tar xfj binutils-2.25.1.tar.bz2
+cd binutils-2.25.1
 echo "[Binutils] Configuring..."
 ./configure --prefix=/tools     \
     --with-sysroot=$PUR                 \
@@ -214,7 +238,7 @@ echo "[GCC] MPFR"
 cd ${PSRC}
 tar xfz gcc-5.3.0.tar.gz
 cd gcc-5.3.0
-tar xfz ../mpfr-3.1.3.tar.gz
+tar xfJ ../mpfr-3.1.3.tar.xz
 mv mpfr-3.1.3 mpfr
 
 # MPC
@@ -282,7 +306,7 @@ cp -r dest/include/* /tools/include
 # Building glibc - first pass
 echo "GlibC - first pass."
 cd ${PSRC}
-tar xfz glibc-${GLIBCVERS}.tar.gz
+tar xfJ glibc-${GLIBCVERS}.tar.xz
 mkdir ${PSRC}/glibc-build
 cd glibc-build
 echo "[GlibC] Configuring..."
@@ -346,16 +370,16 @@ mkdir -p ${PSRC}/binutils-build
 echo "[Binutils] Cleaning from first pass..."
 #cd ${PSRC}/binutils-2.25
 #make distclean > ${PLOGS}/binutils_pre-clean.2 2>&1 ## fuck this shit. keeps throwing an error. let's just start from scratch.
-rm -rf ${PSRC}/binutils-2.25
+rm -rf ${PSRC}/binutils-2.25.1
 cd ${PSRC}
-tar xfz binutils-2.25.tar.gz
-cd binutils-2.25
+tar xfj binutils-2.25.1.tar.bz2
+cd binutils-2.25.1
 cd ${PSRC}/binutils-build
 echo "[Binutils] Configuring..."
 CC=${PUR_TGT}-gcc                \
 AR=${PUR_TGT}-ar                 \
 RANLIB=${PUR_TGT}-ranlib         \
-../binutils-2.25/configure     \
+../binutils-2.25.1/configure     \
     --prefix=/tools            \
     --disable-nls              \
     --disable-werror           \
@@ -394,7 +418,7 @@ cd ${PSRC}/gcc-build
 make distclean > ${PLOGS}/gcc_pre-clean.2 2>&1
 cd ${PSRC}/gcc-5.3.0
 echo "[GCC] MPFR"
-tar xfz ../mpfr-3.1.3.tar.gz
+tar xfJ ../mpfr-3.1.3.tar.xz
 mv mpfr-3.1.3 mpfr
 # MPC
 echo "[GCC] MPC"
@@ -447,7 +471,7 @@ fi
 echo "Running further tests..."
 # TCL
 cd ${PSRC}
-tar xfz tcl8.6.4-src.tar.gz
+tar xfz tcl8.6.4-src.tar.gz 
 cd tcl8.6.4
 cd unix
 echo "[TCL] Configuring..."
@@ -518,8 +542,8 @@ make install >> ${PLOGS}/ncurses_make.1 2>&1
 
 #bash
 cd ${PSRC}
-tar xfz bash-4.3.tar.gz
-cd bash-4.3
+tar xfz bash-4.3.30.tar.gz
+cd bash-4.3.30
 echo "[Bash] Configuring..."
 ./configure --prefix=/tools --without-bash-malloc > ${PLOGS}/bash_configure.1 2>&1
 
@@ -539,8 +563,8 @@ make PREFIX=/tools install >> ${PLOGS}/bzip2_make.1 2>&1
 
 #Coreutils
 cd ${PSRC}
-tar xfJ coreutils-8.24.tar.xz
-cd coreutils-8.24
+tar xfJ coreutils-8.25.tar.xz
+cd coreutils-8.25
 echo "[Coreutils] Configuring..."
 ./configure --prefix=/tools --enable-install-program=hostname > ${PLOGS}/coreutils_configure.1 2>&1
 
@@ -558,7 +582,7 @@ echo "[Diffutils] Configuring..."
 
 echo "[Diffutils] Building..."
 make > ${PLOGS}/diffutils_make.1 2>&1
-make check >> ${PLOGS}/diffutils_make.1 2>&1
+# make check >> ${PLOGS}/diffutils_make.1 2>&1
 make install >> ${PLOGS}/diffutils_make.1 2>&1
 
 # File
@@ -587,7 +611,7 @@ make install >> ${PLOGS}/findutils_makee.1 2>&1
 
 # GAWK
 cd ${PSRC}
-tar xfz gawk-4.1.3.tar.gz
+tar xfJ gawk-4.1.3.tar.xz
 cd gawk-4.1.3
 echo "[Gawk] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/gawk_configure.1 2>&1
@@ -599,7 +623,7 @@ make install >> ${PLOGS}/gawk_make.1 2>&1
 
 #gettext
 cd ${PSRC}
-tar xfz gettext-latest.tar.gz
+tar xfz gettext-0.19.7.tar.gz
 cd gettext-*
 cd gettext-tools
 echo "[Gettext] Configuring..."
@@ -622,7 +646,7 @@ echo "[Grep] Configuring..."
 
 echo "[Grep] Building..."
 make > ${PLOGS}/grep_make.1 2>&1
-make check >> ${PLOGS}/grep_make.1 2>&1
+#make check >> ${PLOGS}/grep_make.1 2>&1
 make install >> ${PLOGS}/grep_make.1 2>&1
 
 # GNU GZip
@@ -639,19 +663,19 @@ make install >> ${PLOGS}/gzip_make.1 2>&1
 
 # M4
 cd ${PSRC}
-tar xfz m4-latest.tar.gz
+tar xfJ m4-1.4.17.tar.xz
 cd m4-*
 echo "[M4] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/m4_configure.1 2>&1
 
 echo "[M4] Building..."
 make > ${PLOGS}/m4_make.1 2>&1
-make check >> ${PLOGS}/m4_make.1 2>&1
+#make check >> ${PLOGS}/m4_make.1 2>&1
 make install >> ${PLOGS}/m4_make.1 2>&1
 
 # GNU Make
 cd ${PSRC}
-tar xfz make-4.1.tar.gz
+tar xfj make-4.1.tar.bz2
 cd make-4.1
 echo "[Make] Configuring..."
 ./configure --prefix=/tools --without-guile > ${PLOGS}/make_configure.1 2>&1
@@ -663,7 +687,7 @@ make install >> ${PLOGS}/make_make.1 2>&1
 
 #GNU Patch
 cd ${PSRC}
-tar xfz patch-2.7.5.tar.gz
+tar xfJ patch-2.7.5.tar.xz
 cd patch-2.7.5
 echo "[Patch] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/patch_configure.1 2>&1
@@ -683,12 +707,12 @@ sh Configure -des -Dprefix=/tools -Dlibs=-lm > ${PLOGS}/perl_configure.1 2>&1
 echo "[Perl] Building..."
 make > ${PLOGS}/perl_make.1 2>&1
 cp perl cpan/podlators/pod2man /tools/bin
-mkdir -p /tools/lib/perl5/5.22.0
-cp -R lib/* /tools/lib/perl5/5.22.0
+mkdir -p /tools/lib/perl5/5.22.1
+cp -R lib/* /tools/lib/perl5/5.22.1
 
 #GNU Sed
 cd ${PSRC}
-tar xfz sed-4.2.2.tar.gz
+tar xfj sed-4.2.2.tar.bz2
 cd sed-4.2.2
 echo "[Sed] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/sed_configure.1 2>&1
@@ -700,7 +724,7 @@ make install >> ${PLOGS}/sed_make.1 2>&1
 
 #GNU Tar
 cd ${PSRC}
-tar xfz tar-latest.tar.gz
+tar xfJ tar-1.28.tar.xz
 cd tar-*
 echo "[Tar] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/tar_configure.1 2>&1
@@ -751,8 +775,11 @@ make install >> ${PLOGS}/xz_make.1 2>&1
 
 
 # Stripping bootstrap env
+# strip throws a non-0 because some /usr/bin's are actually bash scripts, etc.
+set +e
 strip --strip-debug /tools/lib/*
 /usr/bin/strip --strip-unneeded /tools/{,s}bin/*
+set -e
 rm -rf /tools/{,share}/{info,man,doc}
 
 # CHOWNing Bootstrap
@@ -783,4 +810,7 @@ cd ${PUR}
 ${fetch_cmd} https://raw.githubusercontent.com/RainbowHackz/Pur-Linux/master/chrootboot.sh
 chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
-chroot ./ /chrootboot.sh
+sudo chroot ./ /chrootboot.sh
+sudo umount -l ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
+
+rm -f ${PSRC}/pur_src.0.0.1a.tar.xz{,.sha256}
