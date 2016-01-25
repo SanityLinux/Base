@@ -646,7 +646,7 @@ echo "[Grep] Configuring..."
 
 echo "[Grep] Building..."
 make > ${PLOGS}/grep_make.1 2>&1
-make check >> ${PLOGS}/grep_make.1 2>&1
+#make check >> ${PLOGS}/grep_make.1 2>&1
 make install >> ${PLOGS}/grep_make.1 2>&1
 
 # GNU GZip
