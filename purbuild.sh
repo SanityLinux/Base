@@ -109,7 +109,7 @@ rm -rf ${PLOGS}
 mkdir -p ${PLOGS}
 
 # clean up from previous failed runs
-if [ -z {$PUR} ];
+if [ -z "${PUR}" ];
 then
 	echo "PUR VARIABLE IS UNSET! further process will cause host system damage."
 	exit 1
