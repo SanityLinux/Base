@@ -1,11 +1,13 @@
 # Pür Linux
 Pür Linux is a Linux distribution consisting entirely of the latest Upstream code. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no systemd. You don't get bleedinger-edged than this.
 
+THIS REPO WILL EVENTUALLY MOVE TO https://github.com/PurLinux/Base ONCE WE HAVE ACHEIVED OUR FIRST RELEASE.
+
 ## About Pür
 Pür Linux (Pronounced Pure Linux) consists of a base system comprised of upstream pure code (GNU utils you'd expect on a Linux system, the latest vanilla Linux kernel upon packaging), and the Linux port of pkgsrc from NetBSD for ports.
 
 Pür Linux is not a fork, nor respin of any pre-existing Linux Distribution.
-The only relation to any other distro is that right now, we use a Debian box for building the environment that gets tar'd.
+The only relation to any other distro is that right now, we use an Arch Linux box for building the environment that gets tar'd.
 
 Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar to FreeBSD, wherein the base operating system is updated and maintained separately from user-installed packages. This means you can update them independently, and package updates won't bork your OS.
 
@@ -20,9 +22,13 @@ All configurations are done via plaintext files, or shell scripts.
 
 Shells included are bash, csh, ksh, and fish.
 
+We are also the very FIRST Linux Distribution with plans to ship NTPsec rather than classic NTP or OpenNTP by default!
+https://www.ntpsec.org/
+
 ## The Pür Linux Team
-* Rainbow - Project Lead
-* Brent Saner - He does stuff. Sometimes things.
+* Rainbow - Project Director, BASE team lead, Packages Maintainer
+* Brent Saner - Git Wizard, Architecture Engineer, BASE Developer
+* James Stewart - Documentation team lead
 
 ##Benefits of using Pür
 * No weird distro-specific changes to the file-system hierarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
@@ -104,3 +110,8 @@ Q: IRC?
 
 A: #purlinux on irc.freenode.net 
 Come say hi!
+
+Q: Primary Project Master repo?
+
+A: On Github, the primary master repo is at https://github.com/RainbowHackz/Pur-Linux/  
+Other people may have forks.
