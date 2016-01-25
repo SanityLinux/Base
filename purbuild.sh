@@ -115,7 +115,7 @@ then
 	exit 1
 fi
 set +e
-sudo umount ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
+sudo umount -l ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
 sudo rm -rf ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
 set -e
 # sudo is needed if tools has been chown'd
@@ -811,5 +811,6 @@ ${fetch_cmd} https://raw.githubusercontent.com/RainbowHackz/Pur-Linux/master/chr
 chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
 sudo chroot ./ /chrootboot.sh
+sudo umount -l ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
 
 rm -f ${PSRC}/pur_src.0.0.1a.tar.xz{,.sha256}
