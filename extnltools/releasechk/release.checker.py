@@ -146,6 +146,9 @@ for source in upstream:
 		#  just to do this. so multiple iterations on the same string, because lazy.
 		munged_fn = re.sub(name,name + '-',filename)
 		munged_fn = re.sub('-src','',munged_fn)
+	elif name == 'tzdata':
+		# weird and totally incompatible numbering scheme... revisit this in the future maybe.
+		continue
 	else:
 		munged_fn = filename
 

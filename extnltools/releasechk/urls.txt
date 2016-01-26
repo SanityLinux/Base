@@ -29,4 +29,6 @@ tcl@http://iweb.dl.sourceforge.net/project/tcl/Tcl/8.6.4/tcl8.6.4-src.tar.gz
 texinfo@ftp://ftp.gnu.org/gnu/texinfo/texinfo-6.0.tar.gz
 util-linux@https://www.kernel.org/pub/linux/utils/util-linux/v2.27/util-linux-2.27.1.tar.gz
 xz@http://tukaani.org/xz/xz-5.2.2.tar.gz
-fail@http://g.rainwreck.com/fail-1.2.3.tgz#this is a test
+man-db@http://download.savannah.gnu.org/releases/man-db/man-db-2.7.2.tar.xz
+tzdata@http://www.iana.org/time-zones/repository/releases/tzdata2015g.tar.gz#this should be explicitly ignored since it follows a reaaally weird versioning.
+
