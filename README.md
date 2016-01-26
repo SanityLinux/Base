@@ -114,5 +114,5 @@ Come say hi!
 
 Q: Primary Project Master repo?
 
-A: On Github, the primary master repo is at https://github.com/RainbowHackz/Pur-Linux/  
+A: On Github, the primary master repo is at https://github.com/RainbowHackerHorse/Pur-Linux/  
 Other people may have forks.
