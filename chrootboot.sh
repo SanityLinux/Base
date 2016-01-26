@@ -247,3 +247,69 @@ then
 fi
 rm dummy.c a.out dummy.log
 cd ..
+
+
+# zlib
+cd zlib-1.2.8
+echo "[Zlib] Configuring..."
+./configure --prefix=/usr > ${PLOGS}/zlib_configure.1 2>&1
+
+echo "[Zlib] Building..."
+make > ${PLOGS}/zlib_make.1 2>&1
+make install >> ${PLOGS}/zlib_make.1 2>&1
+mv /usr/lib/libz.so.* /lib
+ln -sf ../../lib/$(readlink /usr/lib/libz.so) /usr/lib/libz.so
+cd ..
+
+# file
+cd file-5.25
+echo "[File] Configuring..."
+./configure --prefix=/usr > ${PLOGS}/file_configure.1 2>&1
+
+echo "[File] Building..."
+make > ${PLOGS}/file_make.1 2>&1
+make install > ${PLOGS}/file_make.1 2>&1
+cd ..
+
+# binutils
+expect -c "spawn ls" | egrep -Eq '^spawn ls[[:space:]]*$'
+if [ "${?}" != '0' ];
+then
+	echo "Your PTY allocation is failing. Bailing out..."
+	exit 1
+fi
+rm -rf binutils-build
+mkdir binutils-build
+cd binutils-build
+echo "[Binutils] Configuring..."
+../binutils-2.25.1/configure --prefix=/usr	\
+				--enable-shared \
+				--disable-werror > ${PLOGS}/binutils_configure.1 2>&1
+
+echo "[Binutils] Building..."
+make tooldir=/usr > ${PLOGS}/binutils_make.1 2>&1
+make tooldir=/usr install >> ${PLOGS}/binutils_make.1 2>&1
+cd ..
+
+
+# GMP
+tar -jxf gmp-6.1.0
+cd gmp-6.1.0
+echo "[GMP] Configuring..."
+./configure --prefix=/usr	\
+	--enable-cxx		\
+	--disable-static	\
+	--docdir=/usr/share/doc/gmp > ${PLOGS}/gmp_configure.1 2>&1
+
+echo "[GMP] Building..."
+make > ${PLOGS}/gmp_make.1 2>&1
+make html >> ${PLOGS}/gmp_make.1 2>&1
+echo "[GMP] Running tests..."
+make check > ${PLOGS}/gmp_check.1 2>&1
+linecnt=$(awk '/tests passed/{total+=$2} ; END{print total}' ${PLOGS}/gmp_check.1 | wc -l)
+if [ -n "${linecnt}" ];
+then
+	echo "GMP test failed; bailing out..."
+	exit 1
+fi
+make install >> ${PLOGS}/gmp_make.1 2>&1
