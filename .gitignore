@@ -7,3 +7,5 @@ extnltools/releasechk/urls.txt.bak
 extnltools/releasechk/urls.error.log
 # ignore PyCharm files
 .idea
+# gorram it, gedit.
+*~
