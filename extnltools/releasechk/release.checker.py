@@ -30,26 +30,26 @@ import ftplib
 
 # What version of release is this for?
 # If blank, assume we're testing. TEST will be used instead.
-pur_release = ''
+pur_release = None
 
-# Where should the sources be downloaded to?
+# Where should the sources be downloaded to? *THIS MUST BE SET.*
 source_dir = '/usr/local/www/nginx/pkgs/'
 
 # If this variable is empty, assume the webroot is on this host.
 # If populated, assume that tarball_dir is on the given host and that host has rsync installed
 # (and SSH PKI is properly set up to allow for automated uploading).
 # This lets you run the checker on a remote box without installing python on the file host if desired.
-rsync_host = ''
+rsync_host = None
 
 # What remote user, if rsync_host is set, should we use? If blank but rsync_host is populated, the default
 # is to use the current local user's username.
 # Remember, it is *highly* recommended to use SSH PKI.
 # See https://sysadministrivia.com/notes/HOWTO:SSH_Security for help if desired.
-rsync_user = ''
+rsync_user = None
 
 # What port should we use to connect to rsync, assuming rsync_host is set?
 # If blank, use port 22.
-rsync_port = ''
+rsync_port = None
 
 
 

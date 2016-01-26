@@ -797,10 +797,10 @@ sudo mknod -m 666 ${PUR}/dev/null c 1 3
 # Temporary workaround? Either going with eudev or the old static way, not sure yet! Wheee putting off decisions!
 # I vote for eudev, personally. It'll give us way better hardware detection/hotplugging/etc. support. -bts. Thu Jan 21 09:14:51 EST 2016
 sudo mount --bind /dev ${PUR}/dev
-sudo mount -vt devpts devpts ${PUR}/dev/pts -o gid=5,mode=620
-sudo mount -vt proc proc ${PUR}/proc
-sudo mount -vt sysfs sysfs ${PUR}/sys
-sudo mount -vt tmpfs tmpfs ${PUR}/run
+sudo mount -t devpts devpts ${PUR}/dev/pts -o gid=5,mode=620
+sudo mount -t proc proc ${PUR}/proc
+sudo mount -t sysfs sysfs ${PUR}/sys
+sudo mount -t tmpfs tmpfs ${PUR}/run
 if [ -h ${PUR}/dev/shm ];
 then
 	sudo mkdir -p ${PUR}/$(readlink ${PUR}/dev/shm)
@@ -810,7 +810,13 @@ cd ${PUR}
 ${fetch_cmd} https://raw.githubusercontent.com/RainbowHackz/Pur-Linux/master/chrootboot.sh
 chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
-sudo chroot ./ /chrootboot.sh
+#sudo chroot ./ /chrootboot.sh
+chroot "${PUR}" /tools/bin/env -i      \
+			HOME=/root     \
+			TERM="${TERM}" \
+			PS1='\u:\w\$ ' \
+			PATH=/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
+			/tools/bin/bash /chrootboot.sh
 sudo umount -l ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
 
 rm -f ${PSRC}/pur_src.0.0.1a.tar.xz{,.sha256}
