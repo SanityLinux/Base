@@ -67,28 +67,28 @@ def getNewVer(name,filename,urlbase,cur_ver, comment):
 	        rel_iter = 0 
 	        for release in _cur_ver: #iterate through the number of release points...
 	                if rel_iter == 0:
-	                        print('upgrading major')
+	                        #print('upgrading major')
 	                        rel = str(ver.next_major())
 	                elif rel_iter == 1:
-	                        print('upgrading minor')
+	                        #print('upgrading minor')
 	                        rel = str(ver.next_minor())
 	                elif rel_iter == 2:
-	                        print('upgrading patch')
+	                        #print('upgrading patch')
 	                        rel = str(ver.next_patch())
 	                else:
 	                        break
 	
 	                newfilename = re.sub(cur_ver,rel,filename)
-	                newbaseurl = re.sub(('/{0}/').format(cur_ver),('/{0}/').format(str(rel)),baseurl)
-	                print(('{0} ==> {1}').format(filename,newfilename))
-	                print(('{0} ==> {1}').format(baseurl,newbaseurl))
+	                newurlbase = re.sub(('/{0}/').format(cur_ver),('/{0}/').format(str(rel)),urlbase)
+	                #print(('{0} ==> {1}').format(filename,newfilename))
+	                #print(('{0} ==> {1}').format(urlbase,newurlbase))
 	                rel_iter += 1
 	
 
 	# health check (with protozoan logging) of upstream mirrors, so we can debug possible issues
 	req = urllib.request.Request(
 		urlbase + filename, 
-		data=None, 
+		data=None,
 		headers={
 			'User-Agent': 'https://github.com/RainbowHackerHorse/Pur-Linux/blob/master/extnltools/release.checker.py'
 			#'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
@@ -116,6 +116,7 @@ def getNewVer(name,filename,urlbase,cur_ver, comment):
 	else:
 		with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
 
+	print(('{0} done.').format(name))
 
 	 
 
@@ -127,14 +128,15 @@ for source in upstream:
 	name = line[0]
 	url = re.sub('(\s*#.*$|\n)','',''.join(line[1]))
 	if re.search('\s*#.*$\n?',source):
-		comment = '#' + '#'.join(source.split('#')[1:])
+		#comment = '#' + '#'.join(source.split('#')[1:])
+		comment = '#' + "#".join(source.split('#')[1:])
 		comment = re.sub('\n','',comment)
 	else:
 		comment = ''
 	urlbase = '/'.join(url.split('/')[:-1]) + '/'
 	filename = ''.join(url.split('/')[-1])
 #	print(url)
-	print(('{0}: {1}').format(name,comment))
+	#print(('{0}: {1}').format(name,comment))
 	# stupid projects not keeping proper naming standards.
 	# so we need to munge some filenames for getting the version number.
 	if name == 'check':
@@ -148,7 +150,9 @@ for source in upstream:
 		munged_fn = re.sub('-src','',munged_fn)
 	elif name == 'tzdata':
 		# weird and totally incompatible numbering scheme... revisit this in the future maybe.
+		with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
 		continue
+		print('this should never print')
 	else:
 		munged_fn = filename
 
@@ -159,5 +163,4 @@ for source in upstream:
 	new_ver = getNewVer(name,filename,urlbase,cur_ver,comment)
 
 upstream.close()
-with open('urls.txt.new','a') as filefix: filefix.write('\n')
 os.rename('urls.txt.new','urls.txt')
