@@ -114,6 +114,7 @@ Q: Primary Project Master repo?
 
 A: On Github, the primary master repo is at https://github.com/PurLinux/Base
 
-The original repo was located at https://github.com/RainbowHackerHorse/Pur-Linux/ now https://github.com/RainbowHackerHorse/Pur-Linux-legacy/
+The original repo was located at https://github.com/RainbowHackerHorse/Pur-Linux/ now https://github.com/RainbowHackerHorse/Pur-Linux-Base/tree/Legacy
+Legacy will not be updated, however https://github.com/RainbowHackerHorse/Pur-Linux-Base/ is where my (Rainbow's) contributions are developed before being merged into the upstream Base repo.
 
 Other people may have forks. 
