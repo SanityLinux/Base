@@ -46,8 +46,17 @@ Pür Linux is, however, maintained by an existing Linode employee, on their own 
 Pür Linux will use an rc-style init system, similar to Slackware, rather than sysvinit or SystemD. /dev will likely be populated via eudev, Gentoo's udev fork.
 While we would like to include Clang/LLVM, due to the Linux kernel being reliant on GCC-specific tweaks right now, we will be including GCC in base, with Clang available via pkgsrc. Plans will be made to transition to Clang in base as soon as is feasible.
 
-### Project Roadmap)
+### Project Roadmap
 * Spring 2016 - Initial Stable release, version 2016.04-RELEASE
+
+## Development Branches
+Similar to FreeBSD, we currently maintain multiple branches. 
+* CURRENT - Bleeding edge. Where most of the work occurs.
+* STABLE - Pür Linux's Stable branch is where we stage work for release candidates, and is branched off of CURRENT roughly a month prior to the next RELEASE.
+* RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE. Security updates are tagged with a U. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
+
+Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
+This means each major version has a 3 month lifecycle until EOL. You will not recieve any help for running an EOL version.
 
 ## Installation notes
 Pür Linux works great on most systems.
@@ -83,17 +92,6 @@ A: Pür Linux is built entirely from upstream! This means we won't be mirroring 
 This repository will have a shellscript uploaded along with the first release, to assist you in automating the process.
 As URLs change, it'll be checked for accuracy and updated with each version of Pür Linux.
 This is the same shell script we use for builds.
-
-
-Q: How do you version number?
-
-A: Pür Linux will be released using a $Year.$Month-$minor.version.number scheme
-For example, an October release would be 2016.10.
-Security updates will use the minor version number as well, and will use the original release month's major version number.
-Example: 2016.10-1 would be the first security update for 2016.10.
-Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
-This means each major version has a 3 month lifecycle until EOL. You will not recieve any help for running an EOL version.
-
 
 Q: I wanna send you a message. Wat Do.
 
