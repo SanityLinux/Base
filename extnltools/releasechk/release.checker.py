@@ -22,41 +22,80 @@ import time
 import urllib.request
 import urllib.parse
 import urllib.request
-import ftplib
+import configparser
 
-############
-# SETTINGS #
-############
+# import main settings
+config = configparser.ConfigParser()
+config.read('config.ini')
+release_ver = config['RELEASE']['pur_release']
+destdir = config['FILES']['dir']
+workdir = config['FILES']['workdir']
+repolist = config['FILES']['repolist']
+rsync_host = config['RSYNC']['host']
+rsync_user = config['RSYNC']['port']
 
-# What version of release is this for?
-# If blank, assume we're testing. TEST will be used instead.
-pur_release = None
+upstream = open(repolist,'r')
 
-# Where should the sources be downloaded to? *THIS MUST BE SET.*
-source_dir = '/usr/local/www/nginx/pkgs/'
+def fetchFile(name,filename,newurl,ver):
+	# here's where we actually download files
+	req = urllib.request.Request(
+		newurl, 
+		data=None,
+		headers={
+			'User-Agent': 'https://github.com/RainbowHackerHorse/Pur-Linux/blob/master/extnltools/release.checker.py'
+			#'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
+		})
+	try:
+		source_web = urllib.request.urlopen(req)
+	except urllib.error.URLError as e:
+		if hasattr(e, 'reason'):
+			print(name + ' failed: ',str(e.reason))
+			if e.code:
+				with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,e.code,e.reason))
+			else:
+				with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2})\n').format(str(int(time.time())),name,e.reason))
+		elif hasattr(e, 'code'):
+			print('{0} failed: ',str(e.code))
+			with open('urls.error.log',"a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code)))
+		else:
+			print(('{0} failed: ',''.join(e)).format(name))
+	
 
-# If this variable is empty, assume the webroot is on this host.
-# If populated, assume that tarball_dir is on the given host and that host has rsync installed
-# (and SSH PKI is properly set up to allow for automated uploading).
-# This lets you run the checker on a remote box without installing python on the file host if desired.
-rsync_host = None
+def checkFile(newurl):
+	# disable logging, because there'll be a lot of 404's
+	# check remote for newer version defined in getNewVer
+	req = urllib.request.Request(
+		newurl, 
+		data=None,
+		headers={
+			'User-Agent': 'https://github.com/RainbowHackerHorse/Pur-Linux/blob/master/extnltools/release.checker.py'
+			#'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
+		})
+	try:
+		source_web = urllib.request.urlopen(req)
+	except urllib.error.URLError as e:
+		if hasattr(e, 'reason'):
+			print(name + ' failed: ',str(e.reason))
+			#if e.code:
+			#	with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,e.code,e.reason))
+			#else:
+			#with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2})\n').format(str(int(time.time())),name,e.reason))
+		elif hasattr(e, 'code'):
+			print('{0} failed: ',str(e.code))
+			#with open('urls.error.log',"a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code)))
+		else:
+			print(('{0} failed: ',''.join(e)).format(name))
+#	ftplib.error_perm: 550 Failed to change directory
+	except ftplib.all_errors as e:
+		print(e)
+		#with open("urls.error.log","a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e)))
+	else:
+		pass
 
-# What remote user, if rsync_host is set, should we use? If blank but rsync_host is populated, the default
-# is to use the current local user's username.
-# Remember, it is *highly* recommended to use SSH PKI.
-# See https://sysadministrivia.com/notes/HOWTO:SSH_Security for help if desired.
-rsync_user = None
+	print(('{0} done.').format(name))
 
-# What port should we use to connect to rsync, assuming rsync_host is set?
-# If blank, use port 22.
-rsync_port = None
-
-
-
-
-upstream = open('./urls.txt','r')
-
-def getNewVer(name,filename,urlbase,cur_ver, comment):
+def getNewVer(name,filename,urlbase,cur_ver,loopnum):
+	#try to loop for remote files until we find one that hits. this might need tweaking/delays if upstream has rate limiting.
 	_cur_ver = cur_ver.split('.')
 	try:
 	        ver = semantic_version.Version(cur_ver,partial=True)
@@ -83,40 +122,7 @@ def getNewVer(name,filename,urlbase,cur_ver, comment):
 	                #print(('{0} ==> {1}').format(filename,newfilename))
 	                #print(('{0} ==> {1}').format(urlbase,newurlbase))
 	                rel_iter += 1
-	
-
-	# health check (with protozoan logging) of upstream mirrors, so we can debug possible issues
-	req = urllib.request.Request(
-		urlbase + filename, 
-		data=None,
-		headers={
-			'User-Agent': 'https://github.com/RainbowHackerHorse/Pur-Linux/blob/master/extnltools/release.checker.py'
-			#'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64)'
-		})
-	try:
-		source_web = urllib.request.urlopen(req)
-	except urllib.error.URLError as e:
-		if hasattr(e, 'reason'):
-			print(name + ' failed: ',str(e.reason))
-			with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}').format(name,urlbase,filename,comment))
-			#if e.code:
-			#	with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,e.code,e.reason))
-			#else:
-			with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2})\n').format(str(int(time.time())),name,e.reason))
-		elif hasattr(e, 'code'):
-			print('{0} failed: ',str(e.code))
-			with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}').format(name,urlbase,filename,comment))
-			with open('urls.error.log',"a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code)))
-		else:
-			print(('{0} failed: ',''.join(e)).format(name))
-#	ftplib.error_perm: 550 Failed to change directory
-	except ftplib.all_errors as e:
-		print(e)
-		with open("urls.error.log","a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e)))
-	else:
-		with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
-
-	print(('{0} done.').format(name))
+	return(rel)
 
 	 
 
@@ -150,7 +156,7 @@ for source in upstream:
 		munged_fn = re.sub('-src','',munged_fn)
 	elif name == 'tzdata':
 		# weird and totally incompatible numbering scheme... revisit this in the future maybe.
-		with open("urls.txt.new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
+		with open(repolist+".new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
 		continue
 		print('this should never print')
 	else:
@@ -160,7 +166,10 @@ for source in upstream:
 	cur_ver = re.split('^' + name + '-',munged_fn)
 	cur_ver = re.sub('(\.tgz|\.zip|\.tar(\..*)?)$','',cur_ver[1])
 
-	new_ver = getNewVer(name,filename,urlbase,cur_ver,comment)
+	ver = getNewVer(name,filename,urlbase,cur_ver,20)
+	print(cur_ver,ver)
+	#fetchFile(name,filename,urlbase,ver)
+	with open(repolist+".new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
 
 upstream.close()
-os.rename('urls.txt.new','urls.txt')
+os.rename(repolist+'.new',repolist)
