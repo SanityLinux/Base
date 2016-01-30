@@ -23,6 +23,7 @@ import urllib.request
 import urllib.parse
 import urllib.request
 import configparser
+import ftplib
 
 # import main settings
 config = configparser.ConfigParser()
@@ -36,10 +37,10 @@ rsync_user = config['RSYNC']['port']
 
 upstream = open(repolist,'r')
 
-def fetchFile(name,filename,newurl,ver):
+def fetchFile(newurl,filename):
 	# here's where we actually download files
 	req = urllib.request.Request(
-		newurl, 
+		newurl+filename, 
 		data=None,
 		headers={
 			'User-Agent': 'https://github.com/RainbowHackerHorse/Pur-Linux/blob/master/extnltools/release.checker.py'
@@ -52,13 +53,22 @@ def fetchFile(name,filename,newurl,ver):
 			print(name + ' failed: ',str(e.reason))
 			if e.code:
 				with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,e.code,e.reason))
+				failed = True
 			else:
 				with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2})\n').format(str(int(time.time())),name,e.reason))
+				failed = True
 		elif hasattr(e, 'code'):
 			print('{0} failed: ',str(e.code))
 			with open('urls.error.log',"a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code)))
+			failed = True
 		else:
 			print(('{0} failed: ',''.join(e)).format(name))
+			failed = True
+
+	if failed:
+		return(False)
+	else:
+		return(True)
 	
 
 def checkFile(newurl):
@@ -80,48 +90,79 @@ def checkFile(newurl):
 			#	with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,e.code,e.reason))
 			#else:
 			#with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2})\n').format(str(int(time.time())),name,e.reason))
+			failed = True
 		elif hasattr(e, 'code'):
 			print('{0} failed: ',str(e.code))
 			#with open('urls.error.log',"a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code)))
+			failed = True
 		else:
 			print(('{0} failed: ',''.join(e)).format(name))
+			failed = True
 #	ftplib.error_perm: 550 Failed to change directory
 	except ftplib.all_errors as e:
 		print(e)
 		#with open("urls.error.log","a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e)))
+		failed = True
 	else:
-		pass
+		failed = False
 
-	print(('{0} done.').format(name))
+	if failed:
+		return(False)
+	else:
+		return(True)
 
-def getNewVer(name,filename,urlbase,cur_ver,loopnum):
+def getNewVer(name,filename,urlbase,cur_ver):
 	#try to loop for remote files until we find one that hits. this might need tweaking/delays if upstream has rate limiting.
+	#also, what a mess. this'll be wayyyy easier in the newer implementation since it's all strings in the sqlite3 db
 	_cur_ver = cur_ver.split('.')
 	try:
-	        ver = semantic_version.Version(cur_ver,partial=True)
+		ver = semantic_version.Version(cur_ver,partial=True)
 	except:
-	        pass # it's a malformed version- we can't support 4 or more version points. yet?
+		pass # it's a malformed version- we can't support 4 or more version points. yet?
 	
 	if ver:
-	        rel_iter = 0 
-	        for release in _cur_ver: #iterate through the number of release points...
-	                if rel_iter == 0:
-	                        #print('upgrading major')
-	                        rel = str(ver.next_major())
-	                elif rel_iter == 1:
-	                        #print('upgrading minor')
-	                        rel = str(ver.next_minor())
-	                elif rel_iter == 2:
-	                        #print('upgrading patch')
-	                        rel = str(ver.next_patch())
-	                else:
-	                        break
+		rel_iter = 0
+		print(name)
+		for release in _cur_ver: #iterate through the number of release points...
+			if len(_cur_ver) > 2:
+				if rel_iter == 0:
+					#print('upgrading major')
+					rel = ver.next_major()
+					loop_iter = 2
+				elif rel_iter == 1:
+					#print('upgrading minor')
+					rel = ver.next_minor()
+					loop_iter = 3
+				elif rel_iter == 2:
+					#print('upgrading patch')
+					print(str(ver))
+					rel = ver.next_patch()
+					loop_iter = 5
+				else:
+					# something went haywire
+					rel = cur_ver
+					loop_iter = 0
+
+			else: 
+				# "relaxed" semver most likely, i.e. "1.2" instead of "1.2.0"
+				rel = re.sub('\.0$','',str(ver.next_minor()))
+				loop_iter = 4
 	
-	                newfilename = re.sub(cur_ver,rel,filename)
-	                newurlbase = re.sub(('/{0}/').format(cur_ver),('/{0}/').format(str(rel)),urlbase)
-	                #print(('{0} ==> {1}').format(filename,newfilename))
-	                #print(('{0} ==> {1}').format(urlbase,newurlbase))
-	                rel_iter += 1
+			while loop_iter > 0:
+				loop_ver = re.sub(str(_cur_ver[rel_iter]),str(int(_cur_ver[rel_iter]) + loop_iter),cur_ver)
+				print(loop_ver)
+				newfilename = re.sub(cur_ver,loop_ver,filename)
+				newurlbase = re.sub(('/{0}/').format(cur_ver),('/{0}/').format(str(rel)),urlbase)
+				findme = checkFile(newurlbase+newfilename)
+				if findme:
+					fetchFile(newurlbase,newfilename)
+					break
+				else:
+					#rel = rel.next(patch?min?maj?)
+					loop_iter -= 1
+				#print(('{0} ==> {1}').format(filename,newfilename))
+				#print(('{0} ==> {1}').format(urlbase,newurlbase))
+			rel_iter += 1
 	return(rel)
 
 	 
@@ -166,8 +207,8 @@ for source in upstream:
 	cur_ver = re.split('^' + name + '-',munged_fn)
 	cur_ver = re.sub('(\.tgz|\.zip|\.tar(\..*)?)$','',cur_ver[1])
 
-	ver = getNewVer(name,filename,urlbase,cur_ver,20)
-	print(cur_ver,ver)
+	ver = getNewVer(name,filename,urlbase,cur_ver)
+	#print(cur_ver,ver)
 	#fetchFile(name,filename,urlbase,ver)
 	with open(repolist+".new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
 
