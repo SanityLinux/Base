@@ -38,6 +38,8 @@ rsync_user = config['RSYNC']['port']
 upstream = open(repolist,'r')
 
 def fetchFile(newurl,filename):
+	print('fetching '+filename)
+	failed = False
 	# here's where we actually download files
 	req = urllib.request.Request(
 		newurl+filename, 
@@ -50,7 +52,7 @@ def fetchFile(newurl,filename):
 		source_web = urllib.request.urlopen(req)
 	except urllib.error.URLError as e:
 		if hasattr(e, 'reason'):
-			print(name + ' failed: ',str(e.reason))
+			#print(name + ' failed: ',str(e.reason))
 			if e.code:
 				with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,e.code,e.reason))
 				failed = True
@@ -58,11 +60,11 @@ def fetchFile(newurl,filename):
 				with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2})\n').format(str(int(time.time())),name,e.reason))
 				failed = True
 		elif hasattr(e, 'code'):
-			print('{0} failed: ',str(e.code))
+			#print('{0} failed: ',str(e.code))
 			with open('urls.error.log',"a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code)))
 			failed = True
 		else:
-			print(('{0} failed: ',''.join(e)).format(name))
+			#print(('{0} failed: ',''.join(e)).format(name))
 			failed = True
 
 	if failed:
@@ -72,6 +74,7 @@ def fetchFile(newurl,filename):
 	
 
 def checkFile(newurl):
+	failed = False
 	# disable logging, because there'll be a lot of 404's
 	# check remote for newer version defined in getNewVer
 	req = urllib.request.Request(
@@ -135,7 +138,6 @@ def getNewVer(name,filename,urlbase,cur_ver):
 					loop_iter = 3
 				elif rel_iter == 2:
 					#print('upgrading patch')
-					print(str(ver))
 					rel = ver.next_patch()
 					loop_iter = 5
 				else:
@@ -147,10 +149,33 @@ def getNewVer(name,filename,urlbase,cur_ver):
 				# "relaxed" semver most likely, i.e. "1.2" instead of "1.2.0"
 				rel = re.sub('\.0$','',str(ver.next_minor()))
 				loop_iter = 4
+				relaxed = True
 	
 			while loop_iter > 0:
-				loop_ver = re.sub(str(_cur_ver[rel_iter]),str(int(_cur_ver[rel_iter]) + loop_iter),cur_ver)
-				print(loop_ver)
+				if len(_cur_ver) == 3 and (_cur_ver[0] == _cur_ver[1] or _cur_ver[1] == _cur_ver[2] or _cur_ver[0] == _cur_ver[2]):
+					print('duplicate version detected')
+					if rel_iter == 0:
+						# increment the first section
+						loop_ver = re.sub('^'+str(_cur_ver[rel_iter])+'\.',str(int(_cur_ver[rel_iter]) + loop_iter)+'.',cur_ver)
+					elif rel_iter == 1:
+						# increment the second section
+						loop_ver = re.sub('\.'+str(_cur_ver[rel_iter])+'\.','.'+str(int(_cur_ver[rel_iter]) + loop_iter)+'.',cur_ver)
+					else:
+						# increment the third section
+						loop_ver = re.sub('\.'+str(_cur_ver[rel_iter])+'$','.'+str(int(_cur_ver[rel_iter]) + loop_iter),cur_ver)
+				elif len(_cur_ver) == 2 and _cur_ver[0] == _cur_ver[1]:
+					print('duplicate version detected')
+					if rel_iter == 0:
+						# increment the first section
+						loop_ver = re.sub('^'+str(_cur_ver[rel_iter])+'\.',str(int(_cur_ver[rel_iter]) + loop_iter)+'.',cur_ver)
+					elif rel_iter == 1:
+						# increment the second section
+						loop_ver = re.sub('\.'+str(_cur_ver[rel_iter])+'$','.'+str(int(_cur_ver[rel_iter]) + loop_iter),cur_ver)
+					else:
+						# this should literally never happen since this particular loop runs against relaxed versioning.
+						pass
+				else:
+					loop_ver = re.sub(str(_cur_ver[rel_iter]),str(int(_cur_ver[rel_iter]) + loop_iter),cur_ver)
 				newfilename = re.sub(cur_ver,loop_ver,filename)
 				newurlbase = re.sub(('/{0}/').format(cur_ver),('/{0}/').format(str(rel)),urlbase)
 				findme = checkFile(newurlbase+newfilename)
