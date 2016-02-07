@@ -34,11 +34,11 @@ workdir = config['FILES']['workdir']
 repolist = config['FILES']['repolist']
 rsync_host = config['RSYNC']['host']
 rsync_user = config['RSYNC']['port']
+destdir = re.sub('/?$','/',destdir)
 
 upstream = open(repolist,'r')
 
 def fetchFile(newurl,filename):
-	print('fetching '+filename)
 	failed = False
 	# here's where we actually download files
 	req = urllib.request.Request(
@@ -70,6 +70,7 @@ def fetchFile(newurl,filename):
 	if failed:
 		return(False)
 	else:
+		urllib.request.urlretrieve(newurl,destdir+filename)
 		return(True)
 	
 
@@ -88,22 +89,22 @@ def checkFile(newurl):
 		source_web = urllib.request.urlopen(req)
 	except urllib.error.URLError as e:
 		if hasattr(e, 'reason'):
-			print(name + ' failed: ',str(e.reason))
+			#print(name + ' failed: ',str(e.reason))
 			#if e.code:
 			#	with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2} ({3})\n').format(str(int(time.time())),name,e.code,e.reason))
 			#else:
 			#with open('urls.error.log','a') as errfile: errfile.write(('{0}: {1} {2})\n').format(str(int(time.time())),name,e.reason))
 			failed = True
 		elif hasattr(e, 'code'):
-			print('{0} failed: ',str(e.code))
+			#print('{0} failed: ',str(e.code))
 			#with open('urls.error.log',"a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e.code)))
 			failed = True
 		else:
-			print(('{0} failed: ',''.join(e)).format(name))
+			#print(('{0} failed: ',''.join(e)).format(name))
 			failed = True
 #	ftplib.error_perm: 550 Failed to change directory
 	except ftplib.all_errors as e:
-		print(e)
+		#print(e)
 		#with open("urls.error.log","a") as errfile: errfile.write(('{0}: {1} {2} (no reason given))\n').format(str(int(time.time())),name,str(e)))
 		failed = True
 	else:
@@ -125,7 +126,7 @@ def getNewVer(name,filename,urlbase,cur_ver):
 	
 	if ver:
 		rel_iter = 0
-		print(name)
+		#print(name)
 		for release in _cur_ver: #iterate through the number of release points...
 			if len(_cur_ver) > 2:
 				if rel_iter == 0:
@@ -153,7 +154,6 @@ def getNewVer(name,filename,urlbase,cur_ver):
 	
 			while loop_iter > 0:
 				if len(_cur_ver) == 3 and (_cur_ver[0] == _cur_ver[1] or _cur_ver[1] == _cur_ver[2] or _cur_ver[0] == _cur_ver[2]):
-					print('duplicate version detected')
 					if rel_iter == 0:
 						# increment the first section
 						loop_ver = re.sub('^'+str(_cur_ver[rel_iter])+'\.',str(int(_cur_ver[rel_iter]) + loop_iter)+'.',cur_ver)
@@ -164,7 +164,7 @@ def getNewVer(name,filename,urlbase,cur_ver):
 						# increment the third section
 						loop_ver = re.sub('\.'+str(_cur_ver[rel_iter])+'$','.'+str(int(_cur_ver[rel_iter]) + loop_iter),cur_ver)
 				elif len(_cur_ver) == 2 and _cur_ver[0] == _cur_ver[1]:
-					print('duplicate version detected')
+					#print('duplicate version detected')
 					if rel_iter == 0:
 						# increment the first section
 						loop_ver = re.sub('^'+str(_cur_ver[rel_iter])+'\.',str(int(_cur_ver[rel_iter]) + loop_iter)+'.',cur_ver)
@@ -176,14 +176,17 @@ def getNewVer(name,filename,urlbase,cur_ver):
 						pass
 				else:
 					loop_ver = re.sub(str(_cur_ver[rel_iter]),str(int(_cur_ver[rel_iter]) + loop_iter),cur_ver)
+				#print(loop_ver)
 				newfilename = re.sub(cur_ver,loop_ver,filename)
 				newurlbase = re.sub(('/{0}/').format(cur_ver),('/{0}/').format(str(rel)),urlbase)
 				findme = checkFile(newurlbase+newfilename)
 				if findme:
 					fetchFile(newurlbase,newfilename)
+					filename = newfilename
 					break
 				else:
 					#rel = rel.next(patch?min?maj?)
+					filename = filename
 					loop_iter -= 1
 				#print(('{0} ==> {1}').format(filename,newfilename))
 				#print(('{0} ==> {1}').format(urlbase,newurlbase))
@@ -233,8 +236,7 @@ for source in upstream:
 	cur_ver = re.sub('(\.tgz|\.zip|\.tar(\..*)?)$','',cur_ver[1])
 
 	ver = getNewVer(name,filename,urlbase,cur_ver)
-	#print(cur_ver,ver)
-	#fetchFile(name,filename,urlbase,ver)
+	print(filename)
 	with open(repolist+".new","a") as genfile: genfile.write(('{0}@{1}{2}{3}\n').format(name,urlbase,filename,comment))
 
 upstream.close()
