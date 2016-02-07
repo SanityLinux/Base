@@ -1,8 +1,6 @@
 # Pür Linux
 Pür Linux is a Linux distribution consisting entirely of the latest Upstream code. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no systemd. You don't get bleedinger-edged than this.
 
-THIS REPO WILL EVENTUALLY MOVE TO https://github.com/PurLinux/Base ONCE WE HAVE ACHEIVED OUR FIRST RELEASE.
-
 ## About Pür
 Pür Linux (Pronounced Pure Linux) consists of a base system comprised of upstream pure code (GNU utils you'd expect on a Linux system, the latest vanilla Linux kernel upon packaging), and the Linux port of pkgsrc from NetBSD for ports.
 
@@ -48,10 +46,17 @@ Pür Linux is, however, maintained by an existing Linode employee, on their own 
 Pür Linux will use an rc-style init system, similar to Slackware, rather than sysvinit or SystemD. /dev will likely be populated via eudev, Gentoo's udev fork.
 While we would like to include Clang/LLVM, due to the Linux kernel being reliant on GCC-specific tweaks right now, we will be including GCC in base, with Clang available via pkgsrc. Plans will be made to transition to Clang in base as soon as is feasible.
 
-### Project Roadmap (Please note this is not a guarantee, only a loose plan. This will be updated as things happen)
-* Spring 2016 - Initial Stable release
-* Summer 2016 - Transition completely to custom, scripted build infrastructure
-* Fall 2016 - Final move away from busybox init to FreeBSD-compatible rc-based init system
+### Project Roadmap
+* Spring 2016 - Initial Stable release, version 2016.04-RELEASE
+
+## Development Branches
+Similar to FreeBSD, we currently maintain multiple branches. 
+* CURRENT - Bleeding edge. Where most of the work occurs.
+* STABLE - Pür Linux's Stable branch is where we stage work for release candidates, and is branched off of CURRENT roughly a month prior to the next RELEASE.
+* RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE. Security updates are tagged with a U. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
+
+Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
+This means each major version has a 3 month lifecycle until EOL. You will not recieve any help for running an EOL version.
 
 ## Installation notes
 Pür Linux works great on most systems.
@@ -88,22 +93,14 @@ This repository will have a shellscript uploaded along with the first release, t
 As URLs change, it'll be checked for accuracy and updated with each version of Pür Linux.
 This is the same shell script we use for builds.
 
-
-Q: How do you version number?
-
-A: Pür Linux will be released using a $Year.$Month-$minor.version.number scheme
-For example, an October release would be 2016.10.
-Security updates will use the minor version number as well, and will use the original release month's major version number.
-Example: 2016.10-1 would be the first security update for 2016.10.
-Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
-This means each major version has a 3 month lifecycle until EOL. You will not recieve any help for running an EOL version.
-
-
 Q: I wanna send you a message. Wat Do.
 
-A: Email rainbow@ponix.space (This'll be changing to rainbow@hacker.horse soon enough.)
+A: Email rainbow@purlinux.org
+
 My PGP key is 0x5F94763A
+
 You can also just hit me up on Twitter. I'm Hacker_Horse there.
+
 You can also follow @PurLinux or email info@purlinux.org
 
 Q: IRC?
@@ -113,5 +110,9 @@ Come say hi!
 
 Q: Primary Project Master repo?
 
-A: On Github, the primary master repo is at https://github.com/RainbowHackz/Pur-Linux/  
-Other people may have forks.
+A: On Github, the primary master repo is at https://github.com/PurLinux/Base
+
+The original repo was located at https://github.com/RainbowHackerHorse/Pur-Linux/ now https://github.com/RainbowHackerHorse/Pur-Linux-Base/tree/Legacy
+Legacy will not be updated, however https://github.com/RainbowHackerHorse/Pur-Linux-Base/ is where my (Rainbow's) contributions are developed before being merged into the upstream Base repo.
+
+Other people may have forks. 
