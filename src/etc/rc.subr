@@ -1,4 +1,4 @@
-# Pür Linux /etc/rc version 0.l
+# Pür Linux /etc/rc.subr version 0.l
 # Forked from NetBSD rc.subr verison 1.12
 #
 # Copyright (c) 1997-2002 The NetBSD Foundation, Inc.
