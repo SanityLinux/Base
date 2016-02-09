@@ -1,9 +1,11 @@
-# $NetBSD: rc.subr,v 1.12 2015/05/10 19:20:09 bsiegert Exp $
+# Pür Linux /etc/rc version 0.l
+# Forked from NetBSD rc.subr verison 1.12
 #
 # Copyright (c) 1997-2002 The NetBSD Foundation, Inc.
+# Copyright (c) 2016 Pür Linux
 # All rights reserved.
 #
-# This code is derived from software contributed to The NetBSD Foundation
+# This code is originally derived from software contributed to The NetBSD Foundation
 # by Luke Mewburn.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -22,9 +24,8 @@
 #    contributors may be used to endorse or promote products derived
 #    from this software without specific prior written permission.
 #
-# THIS SOFTWARE IS PROVIDED BY THE NETBSD FOUNDATION, INC. AND CONTRIBUTORS
-# ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED
-# TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+# INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 # PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE FOUNDATION OR CONTRIBUTORS
 # BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
@@ -64,73 +65,18 @@ _RCARG_psformat="-o pid,command"
 _RCARG_ps="-ax"
 _RCARG_su="-m"
 
-_osname=$(uname -s)
-_osrelease=$(uname -r)
-case $_osname in
-	Darwin)
-		_RCCMD_echo="/bin/echo"
-		;;
-	SunOS)
-		_RCCMD_chown="/bin/chown"
-#		_RCCMD_ci="/usr/bin/ci"			# not in Solaris 9
-#		_RCCMD_co="/usr/bin/co"			# not in Solaris 9
-#		_RCCMD_systrace="/bin/systrace"		# not in Solaris 9
-		_RCARG_psformat="-o pid,comm"
-		_RCARG_ps="-ef"
-		_RCARG_su=""
-		if [ "$_osrelease" = "5.11" ]; then
-			bsd_echo () {
-				if [ "$1" = "-n" ]; then
-					shift; echo "$@\c"
-				else
-					echo "$@"
-				fi
-			}
-			_RCCMD_echo="bsd_echo"
-		else
-			_RCCMD_echo="/usr/ucb/echo"	# not in Solaris 11
-			_RCCMD_whoami="/usr/ucb/whoami"	# not in Solaris 11
-		fi
-		;;
-	Interix)
-		bsd_echo () {
-			if [ "$1" = "-n" ]; then
-				shift; echo "$@\c"
-			else
-				echo "$@"
-			fi
-		}
-		_RCCMD_chown="/usr/bin/chown"
-		_RCCMD_ci="/usr/contrib/bin/ci"
-		_RCCMD_co="/usr/contrib/bin/co"
-		_RCCMD_echo="bsd_echo"
-		_RCCMD_rcs="/usr/contrib/bin/rcs"
-		_RCARG_psformat="-wwo pid,comm"
-		;;
-	Linux)
-		_RCCMD_chown="/bin/chown"
-#		_RCCMD_ci="/usr/bin/ci"			# not in Slackware 8.1
-#		_RCCMD_co="/usr/bin/co"			# not in Slackware 8.1
-		_RCCMD_nice=$(which nice)
-#		_RCCMD_rcs="/usr/bin/rcs"		# not in Slackware 8.1
-#		_RCCMD_systrace="/bin/systrace"		# not in Slackware 8.1
-		_RCARG_ps="ax"
-		if [ -e /etc/redhat-release ]; then
-			_RCCMD_su="/bin/su"		# for CentOS/RHEL
-		fi
-		;;
-	QNX)
-		_RCCMD_chown="/bin/chown"
-#		_RCCMD_ci="/usr/bin/ci"			# not in QNX
-#		_RCCMD_co="/usr/bin/co"			# not in QNX
-#		_RCCMD_systrace="/bin/systrace"		# not in QNX
-		_RCCMD_whoami="/usr/bin/id -un"
-		_RCARG_psformat="-o pid,comm"
-		_RCARG_ps="-ef"
-		_RCARG_su=""
-		;;
-esac
 
+	_RCCMD_chown="/bin/chown"
+#	_RCCMD_ci="/usr/bin/ci"			# not in Slackware 8.1
+#	_RCCMD_co="/usr/bin/co"			# not in Slackware 8.1
+	_RCCMD_nice=$(which nice)
+#	_RCCMD_rcs="/usr/bin/rcs"		# not in Slackware 8.1
+#	_RCCMD_systrace="/bin/systrace"		# not in Slackware 8.1
+	_RCARG_ps="ax"
+	if [ -e /etc/redhat-release ]; then
+		_RCCMD_su="/bin/su"		# for CentOS/RHEL
+	fi
+	;;
 #
 #	functions
 #	---------
