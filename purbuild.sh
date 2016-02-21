@@ -10,6 +10,12 @@ if [ "${PS4}" == 'Line ${LINENO}: ' ];
 then
 	set -x
 fi
+
+# RELEASE VERSION #
+PUR_RLS="2016.04"
+RLS_MOD="-RELEASE"
+RLS_URL="http://g.rainwreck.com/pur"
+
 purlogo() {
 cat <<"EOT"
             _   _
@@ -21,12 +27,12 @@ __________ (_) (_)       .____    .__
                                  \/       \/            \/  
 
 Pür Linux Buildscript Version 1
-Pür Linux Version $Year.$Month-RELEASE
+Pür Linux Version ${PUR_RLS}${RLS_MOD}
 
 You should have received a License file, if you cloned from Github.
-If not, please see https://github.com/RainbowHackz/Pur-Linux/blob/master/LICENSE
+If not, please see https://github.com/PurLinux/Base/blob/CURRENT/LICENSE
 This script is released under a Simplified 2-Clause BSD license. Support 
-truely Free software, and use a BSD license for your projects. 
+truly Free software, and use a BSD license for your projects. 
 GPL restrictions just make it Open, not Free.
 
 LFS was originally used for reference, and to bootstrap the project.
@@ -37,7 +43,7 @@ We're a small project, and currently have enough resources to do the needful.
 Your money is better spent with the aforementioned projects.
 
 This is the first half of the Pür Linux build process, which occurrs within 
-the host environment. At the end, another script is called, and run within a chroot.
+the host environment. At the end, another script is called and run within a chroot.
 
 EOT
 }
@@ -62,7 +68,7 @@ purlogo
 # where this script will fail and print to your screen if a key fails. It requires GPG to be installed
 # and may not be implemented for every package yet.
 
-# Build tests are commented out in some places. Automated Stopping upon critical errors will be added in a future version of this script
+# Build tests are commented out in some places due to some machines just plain being too fast/new.
 
 # Check to make sure sh is a link to bash
 if [ "$(sha256sum $(which sh) | awk '{print $1}')" \
@@ -75,7 +81,7 @@ then
         exit 1
 fi
 
-if whoami | grep -q "root"; then
+if [[ "$(whoami)" == "root" ]]; then
         echo " /!\ /!\ /!\ WARNING WARNING WARNING /!\ /!\ /!\ /!\ "
         echo " Don't run me as root. Create a new user!!      "
         echo "/!\ /!\ /!\ WARNING WARNING WARNING /!\ /!\ /!\ /!\ "
@@ -134,9 +140,7 @@ PTLS=${PUR}/tools
 rm -rf ${PTLS}/include
 mkdir -p ${PTLS}/include
 PATH=${PTLS}/bin:/usr/local/bin:/bin:/usr/bin
-GLIBCVERS=2.22
-HOSTGLIBCVERS=2.11
-export LC_ALL PUR_TGT PATH PBLD GLIBCVERS HOSTGLIBCVERS
+export LC_ALL PUR_TGT PATH PBLD
 
 rm -rf ${HOME}/specs
 mkdir -p ${HOME}/specs
@@ -160,43 +164,47 @@ echo "Fetching source tarballs (if necessary) and cleaning up from previous buil
 # luckily, they bundle the entire archive in one handy tarball.
 find . -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
 find . -maxdepth 1 -ignore_readdir_race -type f -not -name "pur_src*.tar.xz" -delete > /dev/null 2>&1
-if [ -f "pur_src.0.0.1a.tar.xz" ];
+if [ -f "pur_src.${PUR_RLS}${RLS_MOD}.tar.xz" ];
 then
 	if type sha256sum > /dev/null 2>&1;
 	then
 		echo "Checking integrity..."
-		${fetch_cmd} -s http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
+		${fetch_cmd} -s "${RLS_URL}/pur_src.${PUR_RLS}${RLS_MOD}.tar.xz.sha256"
 		set +e
-		$(which sha256sum) -c pur_src.0.0.1a.tar.xz.sha256
+		$(which sha256sum) -c pur_src.${PUR_RLS}${RLS_MOD}.tar.xz.sha256
 		if [ "$?" != '0' ];
 		then
-			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.0.0.1a.tar.xz and re-running."
+			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.${PUR_RLS}${RLS_MOD}.tar.xz and re-running."
 			exit 1
 		fi
 		set -e
 	fi
 else
-	${fetch_cmd} http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz
+	${fetch_cmd} ${RLS_URL}/pur_src.${PUR_RLS}${RLS_MOD}.tar.xz
 	if type sha256sum > /dev/null 2>&1;
 	then
 		echo "Checking integrity..."
-		${fetch_cmd} -s http://g.rainwreck.com/pur/pur_src.0.0.1a.tar.xz.sha256
+		${fetch_cmd} -s "${RLS_URL}/${PUR_RLS}${RLS_MOD}.tar.xz.sha256"
 		set +e
-		$(which sha256sum) -c pur_src.0.0.1a.tar.xz.sha256
+		$(which sha256sum) -c pur_src.${PUR_RLS}${RLS_MOD}.xz.sha256
 		if [ "$?" != '0' ];
 		then
-			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.0.0.1a.tar.xz and re-running."
+			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.${PUR_RLS}${RLS_MOD}.tar.xz and re-running."
 			exit 1
 		fi
 		set -e
 	fi
 fi
 echo "Extracting main packageset..."
-tar --totals -Jxf pur_src.0.0.1a.tar.xz
+tar --totals -Jxf pur_src.${PUR_RLS}${RLS_MOD}.tar.xz
 cd pur_src
 mv * ../.
 cd ..
 rmdir pur_src
+GLIBCVERS=$(egrep '^glibc-[0-9' versions.txt | sed -re 's/[A-Za-z]-(.*)$/\1/g')
+HOSTGLIBCVERS="2.11"
+GCCVER=$(egrep '^gcc-[0-9' versions.txt | sed -re 's/[A-Za-z]-(.*)$/\1/g')
+export GLIBCVERS HOSTGLIBCVERS GCCVER
 
 echo
 
@@ -213,14 +221,14 @@ case $(uname -m) in
   x86_64) ln -s /tools/lib /tools/lib64 ;;
 esac
 cd ${PSRC}
-tar xfj binutils-2.25.1.tar.bz2
-cd binutils-2.25.1
+cp -a binutils binutils-build
+cd binutils-build
 echo "[Binutils] Configuring..."
 ./configure --prefix=/tools     \
-    --with-sysroot=$PUR                 \
+    --with-sysroot=${PUR}       \
     --with-lib-path=/tools/lib  \
-    --target=$PUR_TGT                   \
-    --disable-nls                               \
+    --target=${PUR_TGT}         \
+    --disable-nls               \
     --disable-werror > ${PLOGS}/binutils_configure.1 2>&1
 
 echo "[Binutils] Building..."
@@ -236,20 +244,16 @@ echo "GCC - first pass."
 # building MPFR
 echo "[GCC] MPFR"
 cd ${PSRC}
-tar xfz gcc-5.3.0.tar.gz
-cd gcc-5.3.0
-tar xfJ ../mpfr-3.1.3.tar.xz
-mv mpfr-3.1.3 mpfr
+cd gcc
+cp -a ../mpfr .
 
 # MPC
 echo "[GCC] MPC"
-tar xfz ../mpc-1.0.3.tar.gz
-mv mpc-1.0.3 mpc
+cp -a ../mpc .
 
 #GMP
 echo "[GCC] GMP"
-tar xfj ../gmp-6.1.0.tar.bz2
-mv gmp-6.1.0 gmp
+cp -a ../gmp .
 
 #GCC TIME BABY OH YEAH
 echo "[GCC] Configuring..."
@@ -268,7 +272,7 @@ do
 done
 mkdir ../gcc-build
 cd ../gcc-build
-${PWD}/../gcc-5.3.0/configure                                                \
+${PWD}/../gcc/configure                            \
     --target=$PUR_TGT                              \
     --prefix=/tools                                \
     --with-glibc-version=$HOSTGLIBCVERS            \
@@ -297,8 +301,7 @@ make install >> ${PLOGS}/gcc_make.1 2>&1
 ## Grabbing latest kernel headers
 echo "[Kernel] Making and installing headers..."
 cd ${PSRC}
-tar xfz linux-4.4.tar.gz
-cd linux-4.4
+cd linux
 make mrproper > ${PLOGS}/kernel-headers_make.1 2>&1
 make INSTALL_HDR_PATH=dest headers_install >> ${PLOGS}/kernel-headers_make.1 2>&1
 cp -r dest/include/* /tools/include
@@ -306,19 +309,18 @@ cp -r dest/include/* /tools/include
 # Building glibc - first pass
 echo "GlibC - first pass."
 cd ${PSRC}
-tar xfJ glibc-${GLIBCVERS}.tar.xz
 mkdir ${PSRC}/glibc-build
 cd glibc-build
 echo "[GlibC] Configuring..."
-../glibc-2.22/configure                                   \
+../glibc/configure                                        \
       --prefix=/tools                                     \
-      --host=$PUR_TGT                                     \
-      --build=$(../glibc-$GLIBCVERS/scripts/config.guess) \
+      --host=${PUR_TGT}                                   \
+      --build=$(../glibc/scripts/config.guess)            \
       --disable-profile                                   \
       --enable-kernel=2.6.32                              \
       --enable-obsolete-rpc                               \
       --with-headers=/tools/include                       \
-      --with-pkgversion='Pür Linux glibc 2.22'            \
+      --with-pkgversion='Pür Linux glibc'                 \
       libc_cv_forced_unwind=yes                           \
       libc_cv_ctors_header=yes                            \
       libc_cv_c_cleanup=yes > ${PLOGS}/glibc_configure.1 2>&1
@@ -344,16 +346,16 @@ fi
 
 #libstc++
 echo "LibstdC++ - first pass."
-cd $PSRC/gcc-build
+cd ${PSRC}/gcc-build
 echo "[LibstdC++] Configuring..."
-../gcc-5.3.0/libstdc++-v3/configure \
-    --host=$PUR_TGT                 \
+../gcc/libstdc++-v3/configure \
+    --host=${PUR_TGT}               \
     --prefix=/tools                 \
     --disable-multilib              \
     --disable-nls                   \
     --disable-libstdcxx-threads     \
     --disable-libstdcxx-pch         \
-    --with-gxx-include-dir=/tools/${PUR_TGT}/include/c++/5.3.0 > ${PLOGS}/libstdc++_configure.1 2>&1
+    --with-gxx-include-dir=/tools/${PUR_TGT}/include/c++/${GCCVER} > ${PLOGS}/libstdc++_configure.1 2>&1
 
 echo "[LibstdC++] Building..."
 make > ${PLOGS}/libstdc++_make.1 2>&1
@@ -368,18 +370,15 @@ make install >> ${PLOGS}/libstdc++_make.1 2>&1
 echo "Binutils - second pass."
 mkdir -p ${PSRC}/binutils-build
 echo "[Binutils] Cleaning from first pass..."
-#cd ${PSRC}/binutils-2.25
-#make distclean > ${PLOGS}/binutils_pre-clean.2 2>&1 ## fuck this shit. keeps throwing an error. let's just start from scratch.
-rm -rf ${PSRC}/binutils-2.25.1
+rm -rf ${PSRC}/binutils-build
 cd ${PSRC}
-tar xfj binutils-2.25.1.tar.bz2
-cd binutils-2.25.1
+cp -a binutils binutils-build
 cd ${PSRC}/binutils-build
 echo "[Binutils] Configuring..."
 CC=${PUR_TGT}-gcc                \
 AR=${PUR_TGT}-ar                 \
 RANLIB=${PUR_TGT}-ranlib         \
-../binutils-2.25.1/configure     \
+./configure                    \
     --prefix=/tools            \
     --disable-nls              \
     --disable-werror           \
