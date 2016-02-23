@@ -52,7 +52,7 @@ While we would like to include Clang/LLVM, due to the Linux kernel being reliant
 ## Development Branches
 Similar to FreeBSD, we currently maintain multiple branches. 
 * CURRENT - Bleeding edge. Where most of the work occurs. Constantly contains the latest versions of upstream.
-* STABLE - Pür Linux's Stable branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch. No version increases occur in STABLE once it forks from CURRENT.
+* RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch. No version increases occur in RELENG once it forks from CURRENT.
 * RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE. Security updates are tagged with a U, and branched from STABLE. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
 
 Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
