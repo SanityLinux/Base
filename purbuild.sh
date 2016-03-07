@@ -396,12 +396,12 @@ cp ld/ld-new /tools/bin
 # GCC round 2
 echo "GCC - second pass."
 cd ${PUR}/tools/lib
-cat gcc/${PUR_TGT}/5.3.0/plugin/include/limitx.h\
- gcc/${PUR_TGT}/5.3.0/plugin/include/glimits.h\
- gcc/${PUR_TGT}/5.3.0/plugin/include/limity.h > \
+cat gcc/${PUR_TGT}/${GCCVER}/plugin/include/limitx.h\
+ gcc/${PUR_TGT}/${GCCVER}/plugin/include/glimits.h\
+ gcc/${PUR_TGT}/${GCCVER}/plugin/include/limity.h > \
   $(dirname $(${PUR_TGT}-gcc -print-libgcc-file-name))/include-fixed/limits.h
 for file in \
- $(find gcc/${PUR_TGT}/5.3.0/plugin/include/config -name linux64.h -o -name linux.h -o -name sysv4.h)
+ $(find gcc/${PUR_TGT}/${GCCVER}/plugin/include/config -name linux64.h -o -name linux.h -o -name sysv4.h)
 do
   cp -u ${file}{,.orig}
   sed -re 's@/lib(64)?(32)?/ld@/tools&@g' \
@@ -415,18 +415,12 @@ do
 done
 cd ${PSRC}/gcc-build
 make distclean > ${PLOGS}/gcc_pre-clean.2 2>&1
-cd ${PSRC}/gcc-5.3.0
+cd ${PSRC}/gcc
 echo "[GCC] MPFR"
-tar xfJ ../mpfr-3.1.3.tar.xz
-mv mpfr-3.1.3 mpfr
-# MPC
-echo "[GCC] MPC"
-tar xfz ../mpc-1.0.3.tar.gz
-mv mpc-1.0.3 mpc
-#GMP
-echo "[GCC] GMP"
-tar xfj ../gmp-6.1.0.tar.bz2
-mv gmp-6.1.0 gmp
+cd ${PSRC}
+cd gcc
+cp -a ../mpfr .
+
 mkdir -p ../gcc-build
 cd ../gcc-build
 find ./ -name 'config.cache' -exec rm -rf '{}' \;
@@ -435,7 +429,7 @@ CC=$PUR_TGT-gcc                                    \
 CXX=$PUR_TGT-g++                                   \
 AR=$PUR_TGT-ar                                     \
 RANLIB=$PUR_TGT-ranlib                             \
-../gcc-5.3.0/configure                             \
+../gcc-build/configure                             \
     --prefix=/tools                                \
     --with-local-prefix=/tools                     \
     --with-native-system-header-dir=/tools/include \
@@ -470,9 +464,7 @@ fi
 echo "Running further tests..."
 # TCL
 cd ${PSRC}
-tar xfz tcl8.6.4-src.tar.gz 
-cd tcl8.6.4
-cd unix
+cd tcl/unix
 echo "[TCL] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/tcl_configure.1 2>&1
 echo "[TCL] Building..."
@@ -485,8 +477,7 @@ ln -s tclsh8.6 /tools/bin/tclsh
 
 #Expect
 cd ${PSRC}
-tar xfz expect5.45.tar.gz
-cd expect5.45
+cd expect
 cp configure{,.orig}
 echo "[Expect] Configuring..."
 sed -e 's:/usr/local/bin:/bin:' configure.orig > configure
@@ -501,8 +492,7 @@ make SCRIPTS="" install >> ${PLOGS}/expect_make.1 2>&1
 
 #DejaGNU
 cd ${PSRC}
-tar xfz dejagnu-1.5.3.tar.gz
-cd dejagnu-1.5.3
+cd dejagnu
 echo "[DejaGNU] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/dejagnu_configure.1 2>&1
 
@@ -512,8 +502,7 @@ make check >> ${PLOGS}/dejagnu_make.1 2>&1
 
 #check
 cd ${PSRC}
-tar xfz check-0.10.0.tar.gz
-cd check-0.10.0
+cd check
 echo "[Check] Configuring..."
 PKG_CONFIG='' ./configure --prefix=/tools > ${PLOGS}/check_configure.1 2>&1
 
@@ -524,8 +513,7 @@ make install >> ${PLOGS}/check_make.1 2>&1
 
 #ncurses
 cd ${PSRC}
-tar xfz ncurses-6.0.tar.gz
-cd ncurses-6.0
+cd ncurses
 echo "[nCurses] Configuring..."
 sed -i -e 's/mawk//' configure
 ./configure --prefix=/tools \
@@ -541,8 +529,7 @@ make install >> ${PLOGS}/ncurses_make.1 2>&1
 
 #bash
 cd ${PSRC}
-tar xfz bash-4.3.30.tar.gz
-cd bash-4.3.30
+cd bash
 echo "[Bash] Configuring..."
 ./configure --prefix=/tools --without-bash-malloc > ${PLOGS}/bash_configure.1 2>&1
 
@@ -554,16 +541,14 @@ ln -s bash /tools/bin/sh
 
 #Bzip2
 cd ${PSRC}
-tar xfz bzip2-1.0.6.tar.gz
-cd bzip2-1.0.6
+cd bzip2
 echo "[Bzip2] Building..."
 make > ${PLOGS}/bzip2_make.1 2>&1
 make PREFIX=/tools install >> ${PLOGS}/bzip2_make.1 2>&1
 
 #Coreutils
 cd ${PSRC}
-tar xfJ coreutils-8.25.tar.xz
-cd coreutils-8.25
+cd coreutils
 echo "[Coreutils] Configuring..."
 ./configure --prefix=/tools --enable-install-program=hostname > ${PLOGS}/coreutils_configure.1 2>&1
 
@@ -574,8 +559,7 @@ make install >> ${PLOGS}/coreutils_make.1 2>&1
 
 #Diffutils
 cd ${PSRC}
-tar xfJ diffutils-3.3.tar.xz
-cd diffutils-3.3
+cd diffutils
 echo "[Diffutils] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/diffutils_configure.1 2>&1
 
@@ -586,8 +570,7 @@ make install >> ${PLOGS}/diffutils_make.1 2>&1
 
 # File
 cd ${PSRC}
-tar xfz file-5.25.tar.gz
-cd file-5.25
+cd file
 echo "[File] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/file_configure.1 2>&1
 
@@ -598,8 +581,7 @@ make install >> ${PLOGS}/file_make.1 2>&1
 
 # Findutils
 cd ${PSRC}
-tar xfz findutils-4.6.0.tar.gz
-cd findutils-4.6.0
+cd findutils
 echo "[Findutils] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/findutils_configure.1 2>&1
 
@@ -610,8 +592,7 @@ make install >> ${PLOGS}/findutils_makee.1 2>&1
 
 # GAWK
 cd ${PSRC}
-tar xfJ gawk-4.1.3.tar.xz
-cd gawk-4.1.3
+cd gawk
 echo "[Gawk] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/gawk_configure.1 2>&1
 
@@ -622,7 +603,6 @@ make install >> ${PLOGS}/gawk_make.1 2>&1
 
 #gettext
 cd ${PSRC}
-tar xfz gettext-0.19.7.tar.gz
 cd gettext-*
 cd gettext-tools
 echo "[Gettext] Configuring..."
@@ -638,8 +618,7 @@ cp src/{msgfmt,msgmerge,xgettext} /tools/bin
 
 # GNU Grep
 cd ${PSRC}
-tar xfJ grep-2.22.tar.xz
-cd grep-2.22
+cd grep
 echo "[Grep] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/grep_configure.1 2>&1
 
@@ -650,8 +629,7 @@ make install >> ${PLOGS}/grep_make.1 2>&1
 
 # GNU GZip
 cd ${PSRC}
-tar xfJ gzip-1.6.tar.xz
-cd gzip-1.6
+cd gzip
 echo "[Gzip] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/gzip_configure.1 2>&1
 
@@ -662,8 +640,7 @@ make install >> ${PLOGS}/gzip_make.1 2>&1
 
 # M4
 cd ${PSRC}
-tar xfJ m4-1.4.17.tar.xz
-cd m4-*
+cd m4
 echo "[M4] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/m4_configure.1 2>&1
 
@@ -674,8 +651,7 @@ make install >> ${PLOGS}/m4_make.1 2>&1
 
 # GNU Make
 cd ${PSRC}
-tar xfj make-4.1.tar.bz2
-cd make-4.1
+cd make
 echo "[Make] Configuring..."
 ./configure --prefix=/tools --without-guile > ${PLOGS}/make_configure.1 2>&1
 
@@ -686,8 +662,7 @@ make install >> ${PLOGS}/make_make.1 2>&1
 
 #GNU Patch
 cd ${PSRC}
-tar xfJ patch-2.7.5.tar.xz
-cd patch-2.7.5
+cd patch
 echo "[Patch] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/patch_configure.1 2>&1
 
@@ -698,21 +673,19 @@ make install >> ${PLOGS}/patch_make.1 2>&1
 
 # Perl (Will be removed from Base eventually)
 cd ${PSRC}
-tar xfz perl-5.22.1.tar.gz
-cd perl-5.22.1
+cd perl
 echo "[Perl] Configuring..."
 sh Configure -des -Dprefix=/tools -Dlibs=-lm > ${PLOGS}/perl_configure.1 2>&1
 
 echo "[Perl] Building..."
 make > ${PLOGS}/perl_make.1 2>&1
 cp perl cpan/podlators/pod2man /tools/bin
-mkdir -p /tools/lib/perl5/5.22.1
+mkdir -p /tools/lib/perl*/*
 cp -R lib/* /tools/lib/perl5/5.22.1
 
 #GNU Sed
 cd ${PSRC}
-tar xfj sed-4.2.2.tar.bz2
-cd sed-4.2.2
+cd sed
 echo "[Sed] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/sed_configure.1 2>&1
 
@@ -723,8 +696,7 @@ make install >> ${PLOGS}/sed_make.1 2>&1
 
 #GNU Tar
 cd ${PSRC}
-tar xfJ tar-1.28.tar.xz
-cd tar-*
+cd tar
 echo "[Tar] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/tar_configure.1 2>&1
 
@@ -735,8 +707,7 @@ make install >> ${PLOGS}/tar_make.1 2>&1
 
 #GNU Texinfo
 cd ${PSRC}
-tar xfz texinfo-6.0.tar.gz
-cd texinfo-6.0
+cd texinfo
 echo "[Texinfo] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/texinfo_configure.1 2>&1
 
@@ -747,8 +718,7 @@ make install >> ${PLOGS}/texinfo_make.1 2>&1
 
 # Util-Linux
 cd ${PSRC}
-tar xfz util-linux-2.27.1.tar.gz
-cd util-linux-2.27.1
+cd util-linux
 echo "[Util-Linux] Configuring..."
 ./configure --prefix=/tools                \
             --without-python               \
@@ -762,8 +732,7 @@ make install >> ${PLOGS}/util-linux_make.1 2>&1
 
 #Xz
 cd ${PSRC}
-tar xfz xz-5.2.2.tar.gz
-cd xz-5.2.2
+cd xz
 echo "[Xz] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/xz_configure.1 2>&1
 
