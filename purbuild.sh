@@ -56,6 +56,8 @@ purlogo
 # GNU Make
 # libgmp-dev, libmpfr-dev and libmpc-dev
 # gawk
+# sed
+# grep/egrep
 # GNU 'bison' 2.7 or later
 # patch
 # libencode-perl
@@ -71,8 +73,7 @@ purlogo
 # Build tests are commented out in some places due to some machines just plain being too fast/new.
 
 # Check to make sure sh is a link to bash
-if [ "$(sha256sum $(which sh) | awk '{print $1}')" \
-!= "$(sha256sum $(which bash) | awk '{print $1}')" ]
+if [ "$(sha256sum $(which sh) | awk '{print $1}')" != "$(sha256sum $(which bash) | awk '{print $1}')" ];
 then
 	echo " /!\ /!\ /!\ WARNING WARNING WARNING /!\ /!\ /!\ /!\ "
         echo " Your $(which sh) is NOT linked to $(which bash)!!   "
@@ -117,7 +118,7 @@ mkdir -p ${PLOGS}
 # clean up from previous failed runs
 if [ -z "${PUR}" ];
 then
-	echo "PUR VARIABLE IS UNSET! further process will cause host system damage."
+	echo "PUR VARIABLE IS UNSET! Further process will cause host system damage."
 	exit 1
 fi
 set +e
@@ -131,6 +132,9 @@ mkdir -p ${PUR}/sources
 #rm -rf ${PUR}/sources
 find ${PUR}/sources/. -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
 PSRC=${PUR}/sources
+PCNTRB=${PUR}/contrib
+mkdir -p ${PCNTRB}
+find ${PCNTRB}/. -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
 LC_ALL=POSIX
 PUR_TGT="$(uname -m)-pur-linux-gnu"
 sudo rm -rf /tools
@@ -152,12 +156,7 @@ fi
 ulimit -n 512 ## Needed for building GNU Make on Debian
 
 
-
-#Eventually, I'll move hardcoded file locations to use variables instead
-#Variables will be set below here, so it'll fetch ftp://blahblah.blah/$bash.tar.gz
-#instead of hunting and replacing each line. 
-
-#Fetching everything. Move untarring up here at some point too.
+#Fetching everything.
 cd ${PSRC}
 echo "Fetching source tarballs (if necessary) and cleaning up from previous builds (if necessary). This may take a while..."
 # using the official LFS mirror- ftp://mirrors-usa.go-parts.com/lfs/lfs-packages/7.8/- because upstream sites/mirrors are stupid and do things like not support RETRY.
@@ -172,7 +171,7 @@ then
 		${fetch_cmd} -s "${RLS_URL}/pur_src.${PUR_RLS}${RLS_MOD}.tar.xz.sha256"
 		set +e
 		$(which sha256sum) -c pur_src.${PUR_RLS}${RLS_MOD}.tar.xz.sha256
-		if [ "$?" != '0' ];
+		if [ "${?}" != '0' ];
 		then
 			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.${PUR_RLS}${RLS_MOD}.tar.xz and re-running."
 			exit 1
@@ -184,10 +183,10 @@ else
 	if type sha256sum > /dev/null 2>&1;
 	then
 		echo "Checking integrity..."
-		${fetch_cmd} -s "${RLS_URL}/${PUR_RLS}${RLS_MOD}.tar.xz.sha256"
+		${fetch_cmd} -s "${RLS_URL}/pur_src.${PUR_RLS}${RLS_MOD}.tar.xz.sha256"
 		set +e
-		$(which sha256sum) -c pur_src.${PUR_RLS}${RLS_MOD}.xz.sha256
-		if [ "$?" != '0' ];
+		$(which sha256sum) -c pur_src.${PUR_RLS}${RLS_MOD}.tar.xz.sha256
+		if [ "${?}" != '0' ];
 		then
 			echo "SHA256 checksum failed. Try deleting ${PSRC}/pur_src.${PUR_RLS}${RLS_MOD}.tar.xz and re-running."
 			exit 1
@@ -197,14 +196,19 @@ else
 fi
 echo "Extracting main packageset..."
 tar --totals -Jxf pur_src.${PUR_RLS}${RLS_MOD}.tar.xz
-cd pur_src
-mv * ../.
-cd ..
-rmdir pur_src
-GLIBCVERS=$(egrep '^glibc-[0-9' versions.txt | sed -re 's/[A-Za-z]-(.*)$/\1/g')
+cd pur_src/base
+mv * ${PSRC}
+cd ../contrib
+mv * ${PCNTRB}
+rm -rf pur_src
+cd ${PSRC}
+GLIBCVERS=$(egrep '^glibc-[0-9]' versions.txt | sed -re 's/[A-Za-z]-(.*)$/\1/g')
 HOSTGLIBCVERS="2.11"
-GCCVER=$(egrep '^gcc-[0-9' versions.txt | sed -re 's/[A-Za-z]-(.*)$/\1/g')
-export GLIBCVERS HOSTGLIBCVERS GCCVER
+GCCVER=$(egrep '^gcc-[0-9]' versions.txt | sed -re 's/[A-Za-z]*-(.*)$/\1/g')
+PERLVER=$(egrep '^perl-[0-9]' versions.txt | sed -re 's/[A-Za-z]*-(.*)$/\1/g')
+PERLMAJ=$(echo ${PERLVER} | sed -re 's/([0-9]*)\..*$/\1/g')
+TCLVER=$(egrep '^tcl-[0-9]' versions.txt | sed -re 's/[A-Za-z]*-(.*)$/\1/g' | awk -F. '{print $1"."$2}')
+export GLIBCVERS HOSTGLIBCVERS GCCVER PERLVER PERLMAJ
 
 echo
 
@@ -243,8 +247,7 @@ echo "GCC - first pass."
 
 # building MPFR
 echo "[GCC] MPFR"
-cd ${PSRC}
-cd gcc
+cd ${PSRC}/gcc
 cp -a ../mpfr .
 
 # MPC
@@ -257,8 +260,7 @@ cp -a ../gmp .
 
 #GCC TIME BABY OH YEAH
 echo "[GCC] Configuring..."
-for file in \
- $(find gcc/config -name linux64.h -o -name linux.h -o -name sysv4.h)
+for file in $(find gcc/config -name linux64.h -o -name linux.h -o -name sysv4.h);
 do
   cp -u ${file}{,.orig}
   sed -re 's@/lib(64)?(32)?/ld@/tools&@g' \
@@ -272,11 +274,11 @@ do
 done
 mkdir ../gcc-build
 cd ../gcc-build
-${PWD}/../gcc/configure                            \
-    --target=$PUR_TGT                              \
+../gcc/configure                            \
+    --target=${PUR_TGT}                              \
     --prefix=/tools                                \
-    --with-glibc-version=$HOSTGLIBCVERS            \
-    --with-sysroot=$PUR                            \
+    --with-glibc-version=${HOSTGLIBCVERS}          \
+    --with-sysroot=${PUR}                          \
     --with-newlib                                  \
     --without-headers                              \
     --with-local-prefix=/tools                     \
@@ -400,8 +402,7 @@ cat gcc/${PUR_TGT}/${GCCVER}/plugin/include/limitx.h\
  gcc/${PUR_TGT}/${GCCVER}/plugin/include/glimits.h\
  gcc/${PUR_TGT}/${GCCVER}/plugin/include/limity.h > \
   $(dirname $(${PUR_TGT}-gcc -print-libgcc-file-name))/include-fixed/limits.h
-for file in \
- $(find gcc/${PUR_TGT}/${GCCVER}/plugin/include/config -name linux64.h -o -name linux.h -o -name sysv4.h)
+for file in $(find gcc/${PUR_TGT}/${GCCVER}/plugin/include/config -name linux64.h -o -name linux.h -o -name sysv4.h);
 do
   cp -u ${file}{,.orig}
   sed -re 's@/lib(64)?(32)?/ld@/tools&@g' \
@@ -410,26 +411,24 @@ do
 #undef STANDARD_STARTFILE_PREFIX_1
 #undef STANDARD_STARTFILE_PREFIX_2
 #define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"
-#define STANDARD_STARTFILE_PREFIX_2 ""' >> $file
+#define STANDARD_STARTFILE_PREFIX_2 ""' >> ${file}
   touch ${file}.orig
 done
 cd ${PSRC}/gcc-build
 make distclean > ${PLOGS}/gcc_pre-clean.2 2>&1
-cd ${PSRC}/gcc
 echo "[GCC] MPFR"
-cd ${PSRC}
-cd gcc
+cd ${PSRC}/gcc
 cp -a ../mpfr .
 
 mkdir -p ../gcc-build
 cd ../gcc-build
 find ./ -name 'config.cache' -exec rm -rf '{}' \;
 echo "[GCC] Configuring..."
-CC=$PUR_TGT-gcc                                    \
-CXX=$PUR_TGT-g++                                   \
-AR=$PUR_TGT-ar                                     \
-RANLIB=$PUR_TGT-ranlib                             \
-../gcc-build/configure                             \
+CC=${PUR_TGT}-gcc                                    \
+CXX=${PUR_TGT}-g++                                   \
+AR=${PUR_TGT}-ar                                     \
+RANLIB=${PUR_TGT}-ranlib                             \
+../gcc/configure                             \
     --prefix=/tools                                \
     --with-local-prefix=/tools                     \
     --with-native-system-header-dir=/tools/include \
@@ -447,9 +446,8 @@ ln -s gcc /tools/bin/cc
 #testing again
 echo -n "Runnning tests before continuing... "
 echo 'int main(){}' > dummy.c
-$PUR_TGT-gcc dummy.c
-if readelf -l a.out | grep ': /tools' \
-| grep -q ld-linux;
+${PUR_TGT}-gcc dummy.c
+if readelf -l a.out | grep ': /tools' | grep -q ld-linux;
 then
 	echo "Test passed."
 	rm dummy.c a.out
@@ -463,21 +461,19 @@ fi
 ## Tests
 echo "Running further tests..."
 # TCL
-cd ${PSRC}
-cd tcl/unix
+cd ${PSRC}/tcl/unix
 echo "[TCL] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/tcl_configure.1 2>&1
 echo "[TCL] Building..."
 make > ${PLOGS}/tcl_make.1 2>&1
 TZ=UTC make test >> ${PLOGS}/tcl_test.1 2>&1
 make install >> ${PLOGS}/tcl_test.1 2>&1
-chmod u+w /tools/lib/libtcl8.6.so
+chmod u+w /tools/lib/libtcl${TCLVER}.so
 make install-private-headers >> ${PLOGS}/tcl_test.1 2>&1
-ln -s tclsh8.6 /tools/bin/tclsh
+ln -s tclsh${TCLVER} /tools/bin/tclsh
 
 #Expect
-cd ${PSRC}
-cd expect
+cd ${PSRC}/expect
 cp configure{,.orig}
 echo "[Expect] Configuring..."
 sed -e 's:/usr/local/bin:/bin:' configure.orig > configure
@@ -491,8 +487,7 @@ make tests >> ${PLOGS}/expect_make.1 2>&1
 make SCRIPTS="" install >> ${PLOGS}/expect_make.1 2>&1
 
 #DejaGNU
-cd ${PSRC}
-cd dejagnu
+cd ${PSRC}/dejagnu
 echo "[DejaGNU] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/dejagnu_configure.1 2>&1
 
@@ -501,10 +496,11 @@ make install > ${PLOGS}/dejagnu_make.1 2>&1
 make check >> ${PLOGS}/dejagnu_make.1 2>&1
 
 #check
-cd ${PSRC}
-cd check
+cd ${PSRC}/check
 echo "[Check] Configuring..."
-PKG_CONFIG='' ./configure --prefix=/tools > ${PLOGS}/check_configure.1 2>&1
+# this is necessary since we download from git rather than sourceforge. fuck sourceforge.
+autoreconf --install
+PKG_CONFIG= ./configure --prefix=/tools > ${PLOGS}/check_configure.1 2>&1
 
 echo "[Check] Building..."
 make > ${PLOGS}/check_make.1 2>&1
@@ -512,8 +508,7 @@ make check >> ${PLOGS}/check_make.1 2>&1
 make install >> ${PLOGS}/check_make.1 2>&1
 
 #ncurses
-cd ${PSRC}
-cd ncurses
+cd ${PSRC}/ncurses
 echo "[nCurses] Configuring..."
 sed -i -e 's/mawk//' configure
 ./configure --prefix=/tools \
@@ -528,8 +523,7 @@ make > ${PLOGS}/ncurses_make.1 2>&1
 make install >> ${PLOGS}/ncurses_make.1 2>&1
 
 #bash
-cd ${PSRC}
-cd bash
+cd ${PSRC}/bash
 echo "[Bash] Configuring..."
 ./configure --prefix=/tools --without-bash-malloc > ${PLOGS}/bash_configure.1 2>&1
 
@@ -540,15 +534,13 @@ make install >> ${PLOGS}/bash_make.1 2>&1
 ln -s bash /tools/bin/sh
 
 #Bzip2
-cd ${PSRC}
-cd bzip2
+cd ${PSRC}/bzip2
 echo "[Bzip2] Building..."
 make > ${PLOGS}/bzip2_make.1 2>&1
 make PREFIX=/tools install >> ${PLOGS}/bzip2_make.1 2>&1
 
 #Coreutils
-cd ${PSRC}
-cd coreutils
+cd ${PSRC}/coreutils
 echo "[Coreutils] Configuring..."
 ./configure --prefix=/tools --enable-install-program=hostname > ${PLOGS}/coreutils_configure.1 2>&1
 
@@ -558,8 +550,7 @@ make > ${PLOGS}/coreutils_make.1 2>&1
 make install >> ${PLOGS}/coreutils_make.1 2>&1
 
 #Diffutils
-cd ${PSRC}
-cd diffutils
+cd ${PSRC}/diffutils
 echo "[Diffutils] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/diffutils_configure.1 2>&1
 
@@ -569,8 +560,7 @@ make > ${PLOGS}/diffutils_make.1 2>&1
 make install >> ${PLOGS}/diffutils_make.1 2>&1
 
 # File
-cd ${PSRC}
-cd file
+cd ${PSRC}/file
 echo "[File] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/file_configure.1 2>&1
 
@@ -580,8 +570,7 @@ make check >> ${PLOGS}/file_make.1 2>&1
 make install >> ${PLOGS}/file_make.1 2>&1
 
 # Findutils
-cd ${PSRC}
-cd findutils
+cd ${PSRC}/findutils
 echo "[Findutils] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/findutils_configure.1 2>&1
 
@@ -591,8 +580,7 @@ make check >> ${PLOGS}/findutils_makee.1 2>&1
 make install >> ${PLOGS}/findutils_makee.1 2>&1
 
 # GAWK
-cd ${PSRC}
-cd gawk
+cd ${PSRC}/gawk
 echo "[Gawk] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/gawk_configure.1 2>&1
 
@@ -602,8 +590,7 @@ make check >> ${PLOGS}/gawk_make.1 2>&1
 make install >> ${PLOGS}/gawk_make.1 2>&1
 
 #gettext
-cd ${PSRC}
-cd gettext-*
+cd ${PSRC}/gettext
 cd gettext-tools
 echo "[Gettext] Configuring..."
 EMACS="no" ./configure --prefix=/tools --disable-shared > ${PLOGS}/gettext_configure.1 2>&1
@@ -617,8 +604,7 @@ make -C src xgettext >> ${PLOGS}/gettext_make.1 2>&1
 cp src/{msgfmt,msgmerge,xgettext} /tools/bin
 
 # GNU Grep
-cd ${PSRC}
-cd grep
+cd ${PSRC}/grep
 echo "[Grep] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/grep_configure.1 2>&1
 
@@ -628,8 +614,7 @@ make > ${PLOGS}/grep_make.1 2>&1
 make install >> ${PLOGS}/grep_make.1 2>&1
 
 # GNU GZip
-cd ${PSRC}
-cd gzip
+cd ${PSRC}/gzip
 echo "[Gzip] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/gzip_configure.1 2>&1
 
@@ -639,8 +624,7 @@ make check >> ${PLOGS}/gzip_make.1 2>&1
 make install >> ${PLOGS}/gzip_make.1 2>&1
 
 # M4
-cd ${PSRC}
-cd m4
+cd ${PSRC}/m4
 echo "[M4] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/m4_configure.1 2>&1
 
@@ -650,8 +634,7 @@ make > ${PLOGS}/m4_make.1 2>&1
 make install >> ${PLOGS}/m4_make.1 2>&1
 
 # GNU Make
-cd ${PSRC}
-cd make
+cd ${PSRC}/make
 echo "[Make] Configuring..."
 ./configure --prefix=/tools --without-guile > ${PLOGS}/make_configure.1 2>&1
 
@@ -661,8 +644,7 @@ make check >> ${PLOGS}/make_make.1 2>&1
 make install >> ${PLOGS}/make_make.1 2>&1
 
 #GNU Patch
-cd ${PSRC}
-cd patch
+cd ${PSRC}/patch
 echo "[Patch] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/patch_configure.1 2>&1
 
@@ -672,20 +654,18 @@ make check >> ${PLOGS}/patch_make.1 2>&1
 make install >> ${PLOGS}/patch_make.1 2>&1
 
 # Perl (Will be removed from Base eventually)
-cd ${PSRC}
-cd perl
+cd ${PSRC}/perl
 echo "[Perl] Configuring..."
 sh Configure -des -Dprefix=/tools -Dlibs=-lm > ${PLOGS}/perl_configure.1 2>&1
 
 echo "[Perl] Building..."
 make > ${PLOGS}/perl_make.1 2>&1
 cp perl cpan/podlators/pod2man /tools/bin
-mkdir -p /tools/lib/perl*/*
-cp -R lib/* /tools/lib/perl5/5.22.1
+mkdir -p /tools/lib/perl${PERLMAJ}/${PERLVER}
+cp -R lib/* /tools/lib/perl${PERLMAJ}/${PERLVER}
 
 #GNU Sed
-cd ${PSRC}
-cd sed
+cd ${PSRC}/sed
 echo "[Sed] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/sed_configure.1 2>&1
 
@@ -695,8 +675,7 @@ make check >> ${PLOGS}/sed_make.1 2>&1
 make install >> ${PLOGS}/sed_make.1 2>&1
 
 #GNU Tar
-cd ${PSRC}
-cd tar
+cd ${PSRC}/tar
 echo "[Tar] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/tar_configure.1 2>&1
 
@@ -706,8 +685,7 @@ make check >> ${PLOGS}/tar_make.1 2>&1
 make install >> ${PLOGS}/tar_make.1 2>&1
 
 #GNU Texinfo
-cd ${PSRC}
-cd texinfo
+cd ${PSRC}/texinfo
 echo "[Texinfo] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/texinfo_configure.1 2>&1
 
@@ -717,8 +695,7 @@ make check >> ${PLOGS}/texinfo_make.1 2>&1
 make install >> ${PLOGS}/texinfo_make.1 2>&1
 
 # Util-Linux
-cd ${PSRC}
-cd util-linux
+cd ${PSRC}/util-linux
 echo "[Util-Linux] Configuring..."
 ./configure --prefix=/tools                \
             --without-python               \
@@ -731,8 +708,7 @@ make > ${PLOGS}/util-linux_make.1 2>&1
 make install >> ${PLOGS}/util-linux_make.1 2>&1
 
 #Xz
-cd ${PSRC}
-cd xz
+cd ${PSRC}/xz
 echo "[Xz] Configuring..."
 ./configure --prefix=/tools > ${PLOGS}/xz_configure.1 2>&1
 
@@ -775,11 +751,10 @@ then
 fi
 # Entering chroot 
 cd ${PUR}
-${fetch_cmd} https://raw.githubusercontent.com/RainbowHackz/Pur-Linux/master/chrootboot.sh
+${fetch_cmd} https://raw.githubusercontent.com/PurLinux/Base/CURRENT/chrootboot.sh
 chmod +x chrootboot.sh
 echo "ENTERING CHROOT"
-#sudo chroot ./ /chrootboot.sh
-chroot "${PUR}" /tools/bin/env -i      \
+sudo chroot "${PUR}" /tools/bin/env -i      \
 			HOME=/root     \
 			TERM="${TERM}" \
 			PS1='\u:\w\$ ' \
@@ -787,4 +762,4 @@ chroot "${PUR}" /tools/bin/env -i      \
 			/tools/bin/bash /chrootboot.sh
 sudo umount -l ${PUR}/{run,sys,proc,dev} > /dev/null 2>&1
 
-rm -f ${PSRC}/pur_src.0.0.1a.tar.xz{,.sha256}
+rm -f ${PSRC}/pur_src.${PUR_RLS}${PUR_MOD}.tar.xz{,.sha256}
