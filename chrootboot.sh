@@ -60,7 +60,6 @@ usb:x:14:
 cdrom:x:15:
 adm:x:16:
 messagebus:x:18:
-systemd-journal:x:23:
 input:x:24:
 mail:x:34:
 nogroup:x:99:
