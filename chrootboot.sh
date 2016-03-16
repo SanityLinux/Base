@@ -4,7 +4,7 @@ set -e
 
 # /dev will be handled by eudev. -bts 
 echo "Making directory tree..."
-mkdir -p /{bin,boot,etc/opt,home,lib/firmware,mnt,opt}
+mkdir -p /{bin,boot,etc,home,lib/firmware,mnt}
 mkdir -p /{media/{floppy,cdrom},sbin,srv,var}
 install -d -m 0750 /root
 install -d -m 1777 /tmp /var/tmp
