@@ -10,11 +10,7 @@ The only relation to any other distro is that right now, we use an Arch Linux bo
 Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar to FreeBSD, wherein the base operating system is updated and maintained separately from user-installed packages. This means you can update them independently, and package updates won't bork your OS.
 
 Pür Linux will be distributed via Tarball in a quarterly release schedule, starting sometime in 2016.
-Installation will be as simple as untarring and running setup.sh
-Updating is as simple as untarring and replacing, while booted into a rescue distribution such as RIP or Finnix.
-Security patches will be released as needed, via the same format.
-There are tentative plans for a tool, similar to freebsd-update, that will allow in-place upgrades and security updates.
-Please be aware this tool is not yet on our roadmap.
+Installation will be as simple as untarring and running setup.sh, or running setup from a Pür installation disk, similar to Slackware's installation process.
 
 All configurations are done via plaintext files, or shell scripts.
 
@@ -34,12 +30,8 @@ https://www.ntpsec.org/
 * 100% Upstream code: everything is build from upstream code. Everything works as the programmers intended, and all documentation is correct (or as correct as the programmer wrote) for the version installed.
 * Latest code: Pür's goal is to provide the latest stable code releases from the programmers and teams involved. You won't find a 3 year out of date version of something here. Every release is completely comprised of the newest stable releases, unless otherwise specified in the Changelog/Errata Notification
 * No new tools to learn: If you know UNIX, you know Pür Linux. Releases are installed and updated as tarballs you simply extract and overwrite with. Wanna copy your configuration to a whole new system? Tar up /etc and /usr/local, and extract onto a new disk or partition along with the latest Pür Linux release tarball. Done!
-* "Cloud" Support: We support the Linode** platform right out of the box. Boot into Rescue Mode, untar Pür to the disk you created in the Linode Manager, and boot with the latest Linode kernel!
 * Releases are synced with the latest stable snapshot of the NetBSD pkgsrc tree, and via pkgin and pkgsrc's automated building framework, binary packages are also available, in addition to the standard From Source methodology provided by pkgsrc
 * ZFS is a supported Filesystem, and will be included as a Loadable Kernel Module compiled against the current upstream stable Linux kernel.
-
-** DISCLAIMER: Pür Linux is not endorsed by Linode, LLC. The project is not officially affiliated with Linode, LLC.
-Pür Linux is, however, maintained by an existing Linode employee, on their own time.
 
 ## Plans
 
@@ -47,12 +39,14 @@ Pür Linux will use an rc-style init system, similar to Slackware, rather than s
 While we would like to include Clang/LLVM, due to the Linux kernel being reliant on GCC-specific tweaks right now, we will be including GCC in base, with Clang available via pkgsrc. Plans will be made to transition to Clang in base as soon as is feasible.
 
 ### Project Roadmap
-* Spring 2016 - Initial Stable release, version 2016.04-RELEASE
+* April 2016 - Initial fork from CURRENT into 2016-STABLE
+* July 2016 - Fork from 2016-STABLE into 2016.07-RELENG
 
 ## Development Branches
 Similar to FreeBSD, we currently maintain multiple branches. 
 * CURRENT - Bleeding edge. Where most of the work occurs. Constantly contains the latest versions of upstream.
-* RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch. No version increases occur in RELENG once it forks from CURRENT.
+* STABLE - The current non-bleeding-edge development branch of the distribution. Currently, we plan yearly branch forks from CURRENT. The STABLE branch will keep up to date with stable upstream code, but major architectural changes, large software version leaps, and major GLibC updates are restricted to CURRENT. STABLE will be usable, however we suggest running a RELEASE image unless you're a developer or interested in development.
+* RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch. No version increases occur in RELENG once it forks from STABLE. RELENG branches only exist to provide security updates to RELEASE, and EOL after 3 months.
 * RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE. Security updates are tagged with a U, and branched from STABLE. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
 
 Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
@@ -65,8 +59,6 @@ Please be aware of the following caveats:
 
 As we are using pkgsrc for installed packages, Pür Linux will be placing all installed packages inside the /usr/local directory, similar to FreeBSD. /bin, /sbin, /etc, /usr/bin, and /usr/sbin will only be used for Base utilities.
 As such, some scripts you download may require tweaking (We always suggest using the #!/usr/bin/env $shell shebang over hardcoded paths) to work on Pür Linux.
-
-Pür Linux will work GREAT on Linode! Since it's just a tarball, boot into Rescue Mode and untar to the disk you created in the Linode Manager. Feel free to use the Linode kernel, rather than the kernel on disk.
 
 ## FAQ
 
