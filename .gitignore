@@ -9,3 +9,4 @@ extnltools/releasechk/urls.error.log
 .idea
 # gorram it, gedit.
 *~
+/*.tar.xz
