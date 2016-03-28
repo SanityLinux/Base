@@ -172,8 +172,6 @@ ulimit -n 512 ## Needed for building GNU Make on Debian
 #Fetching everything.
 cd ${PSRC}
 echo "Fetching source tarballs (if necessary) and cleaning up from previous builds (if necessary). This may take a while..."
-# using the official LFS mirror- ftp://mirrors-usa.go-parts.com/lfs/lfs-packages/7.8/- because upstream sites/mirrors are stupid and do things like not support RETRY.
-# luckily, they bundle the entire archive in one handy tarball.
 find . -maxdepth 1 -ignore_readdir_race -type d -exec rm -rf '{}' \; > /dev/null 2>&1
 find . -maxdepth 1 -ignore_readdir_race -type f -not -name "pur_src*.tar.xz" -delete > /dev/null 2>&1
 if [ -f "pur_src.${PUR_RLS}${RLS_MOD}.tar.xz" ];
