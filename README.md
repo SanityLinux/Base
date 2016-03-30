@@ -1,5 +1,5 @@
 # Pür Linux
-Pür Linux is a Linux distribution consisting entirely of the latest Upstream code. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no systemd. You don't get bleedinger-edged than this.
+Pür Linux is a Linux distribution focused on Stability, Security, and Simplicity. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no systemd (though we're big proponents of freedom, and do not explicity make system changes designed to render it impossible for you to install systemd if you so choose. We have no intention of providing a package for it, however.)
 
 ## About Pür
 Pür Linux (Pronounced Pure Linux) consists of a base system comprised of upstream pure code (GNU utils you'd expect on a Linux system, the latest vanilla Linux kernel upon packaging), and the Linux port of pkgsrc from NetBSD for ports.
@@ -9,7 +9,8 @@ The only relation to any other distro is that right now, we use an Arch Linux bo
 
 Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar to FreeBSD, wherein the base operating system is updated and maintained separately from user-installed packages. This means you can update them independently, and package updates won't bork your OS.
 
-Pür Linux will be distributed via Tarball in a quarterly release schedule, starting sometime in 2016.
+Pür Linux will be distributed in a quarterly release schedule, starting sometime in 2016. We intend to make our first fork into STABLE branch in April.
+
 Installation will be as simple as untarring and running setup.sh, or running setup from a Pür installation disk, similar to Slackware's installation process.
 
 All configurations are done via plaintext files, or shell scripts.
@@ -47,13 +48,12 @@ Similar to FreeBSD, we currently maintain multiple branches.
 * CURRENT - Bleeding edge. Where most of the work occurs. Constantly contains the latest versions of upstream.
 * STABLE - The current non-bleeding-edge development branch of the distribution. Currently, we plan yearly branch forks from CURRENT. The STABLE branch will keep up to date with stable upstream code, but major architectural changes, large software version leaps, and major GLibC updates are restricted to CURRENT. STABLE will be usable, however we suggest running a RELEASE image unless you're a developer or interested in development.
 * RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch. No version increases occur in RELENG once it forks from STABLE. RELENG branches only exist to provide security updates to RELEASE, and EOL after 3 months.
-* RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE. Security updates are tagged with a U, and branched from STABLE. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
+* RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE, and are tagged out of the RELENG branch. Security updates are tagged with a U, and branched from STABLE. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
 
 Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
 This means each major version has a 3 month lifecycle until EOL. You will not recieve any help for running an EOL version.
 
 ## Installation notes
-Pür Linux works great on most systems.
 
 Please be aware of the following caveats:
 
@@ -75,15 +75,7 @@ I like having an OS be stable and secure and regularly released, with other pack
 
 Q: How are we sure no one tampered with anything?
 
-A: Well, as far as the distro itself, you have to trust me. Thing is, you do that with Ubuntu/CentOS/Slackware/Gentoo already anyway. As far as releases go, each tarball will be signed, and checksummed.
-
-
-Q: Can I build this from source? / Where the heck is your source code?
-
-A: Pür Linux is built entirely from upstream! This means we won't be mirroring anything except tarballs, buildscripts, and if we absolutely have to, specific changes.
-This repository will have a shellscript uploaded along with the first release, to assist you in automating the process.
-As URLs change, it'll be checked for accuracy and updated with each version of Pür Linux.
-This is the same shell script we use for builds.
+A: Well, as far as the distro itself, you have to trust me. Thing is, you do that with Ubuntu/CentOS/Slackware/Gentoo already anyway. As far as releases go, each release, as well as the source tarballs, will be signed via a minimum of two senior developers from the project, and checksummed.
 
 Q: I wanna send you a message. Wat Do.
 
