@@ -50,7 +50,7 @@ EOF
 	exit 0
 }
 
-PKGSRCBRANCH=pkgsrc-2015Q4
+PKGSRCBRANCH=pkgsrc-2016Q1
 export PKGSRCBRANCH
 
 # Parse the command line
