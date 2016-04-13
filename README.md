@@ -100,3 +100,7 @@ The original repo was located at https://github.com/RainbowHackerHorse/Pur-Linux
 Legacy will not be updated, however https://github.com/RainbowHackerHorse/Pur-Linux-Base/ is where my (Rainbow's) contributions are developed before being merged into the upstream Base repo.
 
 Other people may have forks. 
+
+Q: How do I build the distro?
+
+A: Clone the branch you want to fiddle with and run purbuild.sh 
