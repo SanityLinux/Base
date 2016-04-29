@@ -21,7 +21,7 @@ We are also the very FIRST Linux Distribution with plans to ship NTPsec rather t
 https://www.ntpsec.org/
 
 ## The Pür Linux Team
-* Rainbow  - Project Director, BASE team lead, Packages Maintainer. CONTACT: https://twitter.com/hacker_horse
+* Rainbow  - Project Director, BASE team lead, Packages Maintainer. https://twitter.com/hacker_horse
 * Brent Saner - Git Wizard, Architecture Engineer, BASE Developer.  https://twitter.com/sysadm_podcast
 * James Stewart - Documentation team lead. https://twitter.com/TheTechStewart
 
