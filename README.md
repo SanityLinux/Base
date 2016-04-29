@@ -21,7 +21,7 @@ We are also the very FIRST Linux Distribution with plans to ship NTPsec rather t
 https://www.ntpsec.org/
 
 ## The Pür Linux Team
-* Rainbow - Project Director, BASE team lead, Packages Maintainer
+* Rainbow  - Project Director, BASE team lead, Packages Maintainer
 * Brent Saner - Git Wizard, Architecture Engineer, BASE Developer
 * James Stewart - Documentation team lead
 
@@ -36,18 +36,22 @@ https://www.ntpsec.org/
 
 ## Plans
 
-Pür Linux will use an rc-style init system, similar to Slackware, rather than sysvinit or SystemD. /dev will likely be populated via eudev, Gentoo's udev fork.
+### Init
+We are looking at various init systems right now, as init is the last egg to crack before we're ready to start looking at pre-releases and tuning what packages we include in BASE.
+While we do not plan to make it technologically impossible to use systemd on Pür, there will be absolutely no support for such a coinfiguration.
+Our current plans are to use an rc-like system, to better integrate with pkgsrc's rc scripts, however the project is open to suggestions from the community.
+
+### Other Stuff
 While we would like to include Clang/LLVM, due to the Linux kernel being reliant on GCC-specific tweaks right now, we will be including GCC in base, with Clang available via pkgsrc. Plans will be made to transition to Clang in base as soon as is feasible.
 
 ### Project Roadmap
-* April 2016 - Initial fork from CURRENT into 2016-STABLE
-* July 2016 - Fork from 2016-STABLE into 2016.07-RELENG
+* May 2016 - Initial fork from CURRENT into 2016-STABLE
 
 ## Development Branches
 Similar to FreeBSD, we currently maintain multiple branches. 
 * CURRENT - Bleeding edge. Where most of the work occurs. Constantly contains the latest versions of upstream.
 * STABLE - The current non-bleeding-edge development branch of the distribution. Currently, we plan yearly branch forks from CURRENT. The STABLE branch will keep up to date with stable upstream code, but major architectural changes, large software version leaps, and major GLibC updates are restricted to CURRENT. STABLE will be usable, however we suggest running a RELEASE image unless you're a developer or interested in development.
-* RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch. No version increases occur in RELENG once it forks from STABLE. RELENG branches only exist to provide security updates to RELEASE, and EOL after 3 months.
+* RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch, as well as swiching to a new STABLE branch of pkgsrc. No version increases occur in RELENG once it forks from STABLE. RELENG branches only exist to provide security updates to RELEASE, and EOL after 3 months.
 * RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE, and are tagged out of the RELENG branch. Security updates are tagged with a U, and branched from STABLE. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
 
 Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
