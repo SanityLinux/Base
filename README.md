@@ -51,7 +51,7 @@ While we would like to include Clang/LLVM, due to the Linux kernel being reliant
 Similar to FreeBSD, we currently maintain multiple branches. 
 * CURRENT - Bleeding edge. Where most of the work occurs. Constantly contains the latest versions of upstream.
 * STABLE - The current non-bleeding-edge development branch of the distribution. Currently, we plan yearly branch forks from CURRENT. The STABLE branch will keep up to date with stable upstream code, but major architectural changes, large software version leaps, and major GLibC updates are restricted to CURRENT. STABLE will be usable, however we suggest running a RELEASE image unless you're a developer or interested in development.
-* RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch, as well as swiching to a new STABLE branch of pkgsrc. No version increases occur in RELENG once it forks from STABLE. RELENG branches only exist to provide security updates to RELEASE, and EOL after 3 months.
+* RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch, as well as switching to a new STABLE branch of pkgsrc. No version increases occur in RELENG once it forks from STABLE. RELENG branches only exist to provide security updates to RELEASE, and EOL after 3 months.
 * RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE, and are tagged out of the RELENG branch. Security updates are tagged with a U, and branched from STABLE. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
 
 Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
@@ -79,7 +79,7 @@ I like having an OS be stable and secure and regularly released, with other pack
 
 Q: How are we sure no one tampered with anything?
 
-A: Well, as far as the distro itself, you have to trust me. Thing is, you do that with Ubuntu/CentOS/Slackware/Gentoo already anyway. And like them, everything we're doing is open and available, even our build system, so you can reproduce everything. As far as releases go, each release, as well as the source tarballs, will be signed via a minimum of two senior developers from the project, and checksummed.
+A: Well, as far as the distro itself, you have to trust us. Thing is, you do that with Ubuntu/CentOS/Slackware/Gentoo already anyway. And like them, everything we're doing is open and available, even our build system, so you can reproduce everything. As far as releases go, each release, as well as the source tarballs, will be signed via a minimum of two senior developers from the project, and checksummed.
 
 Q: I wanna send you a message. Wat Do.
 
