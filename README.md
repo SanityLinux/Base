@@ -1,3 +1,6 @@
+## News - 11/2016
+Hey guys, we're not dead. Just waiting on Legal (corporate) to OK my continued contributions to the distro. -Rainbow
+
 # Pür Linux
 Pür Linux is a Linux distribution focused on Stability, Security, and Simplicity. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no systemd (though we're big proponents of freedom, and do not explicity make system changes designed to render it impossible for you to install systemd if you so choose. We have no intention of providing a package for it, however.)
 
