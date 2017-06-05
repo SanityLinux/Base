@@ -1,0 +1,3 @@
+[submodule "Kernel"]
+	path = Kernel
+	url = git://github.com/PurLinux/Kernel.git
