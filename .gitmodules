@@ -1,3 +1,6 @@
 [submodule "Kernel"]
 	path = Kernel
 	url = git://github.com/PurLinux/Kernel.git
+[submodule "src/sbin/busybox"]
+	path = src/sbin/busybox
+	url = git://git.busybox.net/busybox
