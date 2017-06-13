@@ -1,5 +1,5 @@
-## News - 11/2016
-Hey guys, we're not dead. Just waiting on Legal (corporate) to OK my continued contributions to the distro. -Rainbow
+## News - 06/2017
+The distro is looking for contributors! Got the chops to bring a Linux distro to life? There's too much work for me to do alone in a reasonable amount of time. Come waste hours of your life with me and delve into voluntary alcoholism while contributing to a FOSS project that'll let you brag at the hackerspace!
 
 # Pür Linux
 Pür Linux is a Linux distribution focused on Stability, Security, and Simplicity. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no systemd (though we're big proponents of freedom, and do not explicity make system changes designed to render it impossible for you to install systemd if you so choose. We have no intention of providing a package for it, however.)
@@ -25,8 +25,8 @@ https://www.ntpsec.org/
 
 ## The Pür Linux Team
 * Rainbow  - Project Director, BASE team lead, Packages Maintainer. https://twitter.com/hacker_horse
-* Brent Saner - Git Wizard, Architecture Engineer, BASE Developer.  https://twitter.com/sysadm_podcast
-* James Stewart - Documentation team lead. https://twitter.com/TheTechStewart
+* Brent - Git Wizard, Architecture Engineer, BASE Developer.  https://twitter.com/sysadm_podcast
+* TechStewart - Documentation team lead. https://twitter.com/TheTechStewart
 
 ##Benefits of using Pür
 * No weird distro-specific changes to the file-system hierarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
@@ -48,7 +48,7 @@ Our current plans are to use an rc-like system, to better integrate with pkgsrc'
 While we would like to include Clang/LLVM, due to the Linux kernel being reliant on GCC-specific tweaks right now, we will be including GCC in base, with Clang available via pkgsrc. Plans will be made to transition to Clang in base as soon as is feasible.
 
 ### Project Roadmap
-* May 2016 - Initial fork from CURRENT into 2016-STABLE
+* January 2018 - Initial fork from CURRENT into 2018-STABLE
 
 ## Development Branches
 Similar to FreeBSD, we currently maintain multiple branches. 
@@ -66,6 +66,15 @@ Please be aware of the following caveats:
 
 As we are using pkgsrc for installed packages, Pür Linux will be placing all installed packages inside the /usr/local directory, similar to FreeBSD. /bin, /sbin, /etc, /usr/bin, and /usr/sbin will only be used for Base utilities.
 As such, some scripts (primarily python and perl scripts where other distros have the interpreters in /usr/bin) you download may require tweaking (We always suggest using the #!/usr/bin/env $shell shebang over hardcoded paths) to work on Pür Linux.
+
+## Contributing
+
+Please clone the branch of your choice and get to work! Branch it in your fork with the following naming conventions:
+$HEADBRANCH/${Feature/Bugfix/Versioning}/$Brief-Description.
+Example: CURRENT/Versioning/Update-GCC-5
+Open a pull request when you're ready from that branch against $HEADBRANCH and someone from the team will review it as soon as we can!
+If you have a commit-bit from us, please follow the same rules, however you can usually merge your own PRs.
+Please tag @RainbowHackerHorse for review if it's not urgent.
 
 ## FAQ
 
