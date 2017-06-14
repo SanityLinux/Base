@@ -853,8 +853,8 @@ then
 	${fetch_cmd} http://10.1.1.1/pur/chrootboot.sh
 	${fetch_cmd} http://10.1.1.1/pur/chrootboot-stage2.sh
 else
-	${fetch_cmd} https://raw.githubusercontent.com/PurLinux/Base/CURRENT/chrootboot.sh
-	${fetch_cmd} https://raw.githubusercontent.com/PurLinux/Base/CURRENT/chrootboot-stage2.sh
+	${fetch_cmd} https://raw.githubusercontent.com/PurLinux/Base/CURRENT/Build/chrootboot.sh
+	${fetch_cmd} https://raw.githubusercontent.com/PurLinux/Base/CURRENT/Build/chrootboot-stage-2.sh
 fi
 chmod +x chrootboot.sh
 chmod +x chrootboot-stage2.sh
