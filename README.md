@@ -12,7 +12,7 @@ The only relation to any other distro is that right now, we use an Arch Linux bo
 
 Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar to FreeBSD, wherein the base operating system is updated and maintained separately from user-installed packages. This means you can update them independently, and package updates won't bork your OS.
 
-Pür Linux will be distributed in a quarterly release schedule, starting sometime in 2016. We intend to make our first fork into STABLE branch in April.
+Pür Linux will be distributed in a quarterly release schedule.
 
 Installation will be as simple as untarring and running setup.sh, or running setup from a Pür installation disk, similar to Slackware's installation process.
 
@@ -28,7 +28,7 @@ https://www.ntpsec.org/
 * Brent - Git Wizard, Architecture Engineer, BASE Developer.  https://twitter.com/sysadm_podcast
 * TechStewart - Documentation team lead. https://twitter.com/TheTechStewart
 
-##Benefits of using Pür
+## Benefits of using Pür
 * No weird distro-specific changes to the file-system hierarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
 * No binary logs or incomprehensible configuration formats: We're not using systemd. Everything is logged to plaintext. Configuration files are the same, unless otherwise specified by upstream, which brings us to:
 * 100% Upstream code: everything is build from upstream code. Everything works as the programmers intended, and all documentation is correct (or as correct as the programmer wrote) for the version installed.
@@ -78,16 +78,13 @@ Please tag @RainbowHackerHorse for review if it's not urgent.
 
 ## FAQ
 
+Q: That's not how Pür is pronounced!
+
+A: Yeah yeah, I get that a lot. Start your own distro if you don't like us mangling multiple languages at once.
+
 Q: So does pkgsrc update the whole system?
 
 A: Nope! Pür Linux breaks the traditional Linux paradigm of EVERYTHING IS A PACKAGE. I'm a FreeBSD sysadmin, and I really enjoy the separation between the Base system and 3rd party packages. While Pür Linux won't be developed in a single source tree like FreeBSD (No desire nor need to fork much) there's still going to be separation between the Base OS (Pür Linux) and Ports (using pkgsrc)
-
-
-Q: You're just trying to make Linux like $BSD
-
-A: Yup. That's the world I come from. I started out as a Linux admin originally, but all the lack of standardization between distros made me tear my hair out. Not to mention the problems with the everything is a package way of doing things.
-I like having an OS be stable and secure and regularly released, with other packages being taken care of separately.
-
 
 Q: How are we sure no one tampered with anything?
 
