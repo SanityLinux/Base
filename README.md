@@ -4,39 +4,39 @@ Pür Linux is now Sanity Linux! This name change comes as I resume work on the d
 ## News - 06/2017
 The distro is looking for contributors! Got the chops to bring a Linux distro to life? There's too much work for me to do alone in a reasonable amount of time. Come waste hours of your life with me and delve into voluntary alcoholism while contributing to a FOSS project that'll let you brag at the hackerspace!
 
-# Pür Linux
-Pür Linux is a Linux distribution focused on Stability, Security, and Simplicity. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no systemd (though we're big proponents of freedom, and do not explicity make system changes designed to render it impossible for you to install systemd if you so choose. We have no intention of providing a package for it, however.)
+# Sanity Linux
+Sanity Linux is a Linux distribution focused on Stability, Security, and Simplicity. No wonky distro-specific changes, no unneeded packages in base, and best of all (in our opinion), no systemd (though we're big proponents of freedom, and do not explicity make system changes designed to render it impossible for you to install systemd if you so choose. We have no intention of providing a package for it, however.)
 
-## About Pür
-Pür Linux (Pronounced Pure Linux) consists of a base system comprised of upstream pure code (GNU utils you'd expect on a Linux system, the latest vanilla Linux kernel upon packaging), and the Linux port of pkgsrc from NetBSD for ports.
+## About Sanity
+Sanity Linux consists of a base system comprised of upstream pure code (GNU utils you'd expect on a Linux system, the latest vanilla Linux kernel upon packaging), and the Linux port of pkgsrc from NetBSD for ports.
 
-Pür Linux is not a fork, nor respin of any pre-existing Linux Distribution.
+Sanity Linux is not a fork, nor respin of any pre-existing Linux Distribution.
 The only relation to any other distro is that right now, we use an Arch Linux box for building the environment that gets tar'd.
 
-Unlike other Linux distributions, Pür Linux uses a Base/Ports paradigm, similar to FreeBSD, wherein the base operating system is updated and maintained separately from user-installed packages. This means you can update them independently, and package updates won't bork your OS.
+Unlike other Linux distributions, Sanity Linux uses a Base/Ports paradigm, similar to FreeBSD, wherein the base operating system is updated and maintained separately from user-installed packages. This means you can update them independently, and package updates won't bork your OS.
 
-Pür Linux will be distributed in a quarterly release schedule.
+Sanity Linux will be distributed in a quarterly release schedule.
 
 Installation will be as simple as untarring and running setup.sh, or running setup from a Pür installation disk, similar to Slackware's installation process.
 
 All configurations are done via plaintext files, or shell scripts.
 
-Shells included are bash, csh, ksh, and fish.
+Shells included are csh, ksh, and dash.
 
 We are also the very FIRST Linux Distribution with plans to ship NTPsec rather than classic NTP or OpenNTP by default!
 https://www.ntpsec.org/
 
-## The Pür Linux Team
+## The Sanity Linux Team
 * Rainbow  - Project Director, BASE team lead, Packages Maintainer. https://twitter.com/hacker_horse
 * Brent - Git Wizard, Architecture Engineer, BASE Developer.  https://twitter.com/sysadm_podcast
 * TechStewart - Documentation team lead. https://twitter.com/TheTechStewart
 
-## Benefits of using Pür
+## Benefits of Sanity
 * No weird distro-specific changes to the file-system hierarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
 * No binary logs or incomprehensible configuration formats: We're not using systemd. Everything is logged to plaintext. Configuration files are the same, unless otherwise specified by upstream, which brings us to:
 * 100% Upstream code: everything is build from upstream code. Everything works as the programmers intended, and all documentation is correct (or as correct as the programmer wrote) for the version installed.
-* Latest code: Pür's goal is to provide the latest stable code releases from the programmers and teams involved. You won't find a 3 year out of date version of something here. Every release is completely comprised of the newest stable releases, unless otherwise specified in the Changelog/Errata Notification
-* No new tools to learn: If you know UNIX, you know Pür Linux. Releases are installed and updated as tarballs you simply extract and overwrite with. Wanna copy your configuration to a whole new system? Tar up /etc and /usr/local, and extract onto a new disk or partition along with the latest Pür Linux release tarball. Done!
+* Latest code: Sanity's goal is to provide the latest stable code releases from the programmers and teams involved. You won't find a 3 year out of date version of something here. Every release is completely comprised of the newest stable releases, unless otherwise specified in the Changelog/Errata Notification
+* No new tools to learn: If you know UNIX, you know Sanity Linux. Releases are installed and updated as tarballs you simply extract and overwrite with. Wanna copy your configuration to a whole new system? Tar up /etc and /usr/local, and extract onto a new disk or partition along with the latest Sanity Linux release tarball. Done!
 * Releases are synced with the latest stable snapshot of the NetBSD pkgsrc tree, and via pkgin and pkgsrc's automated building framework, binary packages are also available, in addition to the standard From Source methodology provided by pkgsrc
 * ZFS is a supported Filesystem, and will be included as a Loadable Kernel Module compiled against the current upstream stable Linux kernel.
 
@@ -57,8 +57,8 @@ While we would like to include Clang/LLVM, due to the Linux kernel being reliant
 Similar to FreeBSD, we currently maintain multiple branches. 
 * CURRENT - Bleeding edge. Where most of the work occurs. Constantly contains the latest versions of upstream.
 * STABLE - The current non-bleeding-edge development branch of the distribution. Currently, we plan yearly branch forks from CURRENT. The STABLE branch will keep up to date with stable upstream code, but major architectural changes, large software version leaps, and major GLibC updates are restricted to CURRENT. STABLE will be usable, however we suggest running a RELEASE image unless you're a developer or interested in development.
-* RELENG - Pür Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch, as well as switching to a new STABLE branch of pkgsrc. No version increases occur in RELENG once it forks from STABLE. RELENG branches only exist to provide security updates to RELEASE, and EOL after 3 months.
-* RELEASE - The current stable release of Pür Linux. Releases are formatted as Year.Month-RELEASE, and are tagged out of the RELENG branch. Security updates are tagged with a U, and branched from STABLE. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
+* RELENG - Sanity Linux's Release Engineering branch is where we stage work for release candidates. Additionally, Security updates are imported into this branch, as well as switching to a new STABLE branch of pkgsrc. No version increases occur in RELENG once it forks from STABLE. RELENG branches only exist to provide security updates to RELEASE, and EOL after 3 months.
+* RELEASE - The current stable release of Sanity Linux. Releases are formatted as Year.Month-RELEASE, and are tagged out of the RELENG branch. Security updates are tagged with a U, and branched from STABLE. For example, 2016.07-RELEASE-U1 would be the first security update for 2016.07-RELEASE
 
 Due to the release schedule, Security Updates will only be supplied for a version until the next major version release.
 This means each major version has a 3 month lifecycle until EOL. You will not receive any help for running an EOL version.
@@ -67,8 +67,8 @@ This means each major version has a 3 month lifecycle until EOL. You will not re
 
 Please be aware of the following caveats:
 
-As we are using pkgsrc for installed packages, Pür Linux will be placing all installed packages inside the /usr/local directory, similar to FreeBSD. /bin, /sbin, /etc, /usr/bin, and /usr/sbin will only be used for Base utilities.
-As such, some scripts (primarily python and perl scripts where other distros have the interpreters in /usr/bin) you download may require tweaking (We always suggest using the #!/usr/bin/env $shell shebang over hardcoded paths) to work on Pür Linux.
+As we are using pkgsrc for installed packages, Sanity Linux will be placing all installed packages inside the /usr/local directory, similar to FreeBSD. /bin, /sbin, /etc, /usr/bin, and /usr/sbin will only be used for Base utilities.
+As such, some scripts (primarily python and perl scripts where other distros have the interpreters in /usr/bin) you download may require tweaking (We always suggest using the #!/usr/bin/env $shell shebang over hardcoded paths) to work on Sanity Linux.
 
 ## Contributing
 
@@ -81,13 +81,14 @@ Please tag @RainbowHackerHorse for review if it's not urgent.
 
 ## FAQ
 
-Q: That's not how Pür is pronounced!
+Q: But I liked the old name!
 
-A: Yeah yeah, I get that a lot. Start your own distro if you don't like us mangling multiple languages at once.
+A: So did I. I got tired of people whining about it, and Sanity Linux makes a little more sense anyway. We're an island of sanity in all the
+crazy stuff going on in Linux-land lately.
 
 Q: So does pkgsrc update the whole system?
 
-A: Nope! Pür Linux breaks the traditional Linux paradigm of EVERYTHING IS A PACKAGE. I'm a FreeBSD sysadmin, and I really enjoy the separation between the Base system and 3rd party packages. While Pür Linux won't be developed in a single source tree like FreeBSD (No desire nor need to fork much) there's still going to be separation between the Base OS (Pür Linux) and Ports (using pkgsrc)
+A: Nope! Sanity Linux breaks the traditional Linux paradigm of EVERYTHING IS A PACKAGE. I'm a FreeBSD contributor, and I really enjoy the separation between the Base system and 3rd party packages. While Sanity Linux won't be developed in a single source tree like FreeBSD (No desire nor need to fork much) there's still going to be separation between the Base OS (Sanity Linux) and Ports (using pkgsrc)
 
 Q: How are we sure no one tampered with anything?
 
@@ -110,7 +111,7 @@ Come say hi!
 
 Q: Primary Project Master repo?
 
-A: On Github, the primary master repo is at https://github.com/PurLinux/Base 
+A: On Github, the primary master repo is at https://github.com/SanityLinux/Base 
 
 The original repo was located at https://github.com/RainbowHackerHorse/Pur-Linux/ now https://github.com/RainbowHackerHorse/Pur-Linux-Base/tree/Legacy
 
