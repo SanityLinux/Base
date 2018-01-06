@@ -1,3 +1,6 @@
+** News - 01/2018
+Pür Linux is now Sanity Linux! This name change comes as I resume work on the disstro, and got tired of people calling it "Purr Linux? Like a cat?"
+
 ## News - 06/2017
 The distro is looking for contributors! Got the chops to bring a Linux distro to life? There's too much work for me to do alone in a reasonable amount of time. Come waste hours of your life with me and delve into voluntary alcoholism while contributing to a FOSS project that'll let you brag at the hackerspace!
 
