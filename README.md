@@ -1,4 +1,4 @@
-** News - 01/2018
+## News - 01/2018
 Pür Linux is now Sanity Linux! This name change comes as I resume work on the disstro, and got tired of people calling it "Purr Linux? Like a cat?"
 
 ## News - 06/2017
