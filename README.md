@@ -29,7 +29,6 @@ https://www.ntpsec.org/
 ## The Sanity Linux Team
 * Rainbow  - Project Director, BASE team lead, Packages Maintainer. https://twitter.com/hacker_horse
 * Brent - Git Wizard, Architecture Engineer, BASE Developer.  https://twitter.com/sysadm_podcast
-* TechStewart - Documentation team lead. https://twitter.com/TheTechStewart
 
 ## Benefits of Sanity
 * No weird distro-specific changes to the file-system hierarchy: we use a standardized filesystem layout, similar to FreeBSD and traditional UNIX.
